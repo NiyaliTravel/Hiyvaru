@@ -1,36 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hiyvaru — ހިޔްވަރު
 
-## Getting Started
+Anonymous peer-listening platform for the Maldives. Members 16+ get matched
+with trained, ID-verified volunteer listeners for private text chats in
+Dhivehi or English. See `SAFETY.md` for every safety mechanism and how to
+test it, and `NEEDS_MOHAMED.md` for open founder decisions.
 
-First, run the development server:
+## Stack
+Next.js 15 (App Router, TS) · PostgreSQL + Drizzle · Socket.IO · BullMQ +
+Redis · Twilio (mock mode when unset) · next-intl (dv Thaana RTL + en) ·
+AES-256 at rest · Docker Compose.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Dev without Docker
+`npm run dev` — uses embedded PGlite (`.data/pglite`) and an in-process queue;
+SMS goes to `.data/outbox.jsonl`. With Docker: `docker compose up`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tests
+`npm test` — safety-critical paths (age gate, hard delete, escalation,
+listener gating) are all covered; see SAFETY.md.

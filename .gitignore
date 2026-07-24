@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# hiyvaru local data (PGlite, mock SMS outbox, cookies)
+.data/
+.env
+drizzle/meta/_journal.json.bak

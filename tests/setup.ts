@@ -1,0 +1,12 @@
+import { ensureMigrated, __resetDbForTests } from "@/lib/db";
+
+process.env.PHONE_HASH_SECRET ??= "test-phone-hash-secret";
+process.env.MESSAGE_MASTER_KEY ??=
+  "0000000000000000000000000000000000000000000000000000000000000001";
+process.env.ID_DOC_MASTER_KEY ??=
+  "0000000000000000000000000000000000000000000000000000000000000002";
+
+export async function freshDb() {
+  __resetDbForTests();
+  await ensureMigrated();
+}

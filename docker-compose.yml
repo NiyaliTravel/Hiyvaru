@@ -1,0 +1,48 @@
+version: "3.9"
+
+# Hiyvaru local/prod-ish stack: app + postgres + redis.
+# On machines without Docker (e.g. dev on Windows ARM64), the app falls back to
+# PGlite (embedded Postgres) and an in-process queue when DATABASE_URL/REDIS_URL
+# are unset. Production MUST run with real Postgres + Redis.
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://hiyvaru:hiyvaru@postgres:5432/hiyvaru
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hiyvaru
+      POSTGRES_PASSWORD: hiyvaru
+      POSTGRES_DB: hiyvaru
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hiyvaru"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  redisdata:

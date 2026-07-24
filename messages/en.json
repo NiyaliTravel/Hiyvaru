@@ -1,0 +1,78 @@
+{
+  "common": {
+    "appName": "Hiyvaru",
+    "tagline": "Someone to talk to. Anonymous. In Dhivehi or English.",
+    "listeners": "listeners",
+    "listenerNote": "Our listeners are trained volunteers who listen. They are not counsellors or therapists and do not give advice.",
+    "continue": "Continue",
+    "back": "Back",
+    "logout": "Log out",
+    "language": "Language",
+    "loading": "Loading…"
+  },
+  "helplines": {
+    "corner": "Need help now?",
+    "helpline1677": "1677 · Mental Health Helpline",
+    "police119": "119 · Police emergency",
+    "call": "Call"
+  },
+  "landing": {
+    "cta": "Talk to someone",
+    "how1": "You stay anonymous — we give you a random name and never show your number to anyone.",
+    "how2": "You are matched with a trained volunteer listener, in Dhivehi or English.",
+    "how3": "You can delete your conversation forever, any time.",
+    "signup": "Create an account",
+    "login": "Log in",
+    "becomeListener": "Become a listener"
+  },
+  "auth": {
+    "signupTitle": "Create your anonymous account",
+    "loginTitle": "Log in",
+    "phone": "Phone number",
+    "email": "Email",
+    "usePhone": "Use phone instead",
+    "useEmail": "Use email instead",
+    "dob": "Date of birth",
+    "dobWhy": "Hiyvaru is for ages 16 and up. We only keep your birth year — never the full date.",
+    "langPref": "Which language would you like to talk in?",
+    "langDv": "Dhivehi",
+    "langEn": "English",
+    "langBoth": "Both",
+    "sendCode": "Send code",
+    "codeSent": "We sent a 6-digit code. Enter it below.",
+    "code": "Verification code",
+    "verify": "Verify & create account",
+    "verifyLogin": "Verify & log in",
+    "errInvalidPhone": "That phone number doesn't look right.",
+    "errInvalidEmail": "That email doesn't look right.",
+    "errBadCode": "That code is wrong or expired.",
+    "errCooldown": "Please wait a minute before requesting another code.",
+    "errAlreadyRegistered": "This phone or email already has an account. Try logging in.",
+    "errInvalidDate": "Please enter a valid date of birth.",
+    "errNoAccount": "No account found for that phone or email.",
+    "welcome": "Welcome, {name}",
+    "yourName": "Your anonymous name is"
+  },
+  "under16": {
+    "title": "Hiyvaru is for ages 16 and up",
+    "body": "We're really glad you reached out — that took courage. Hiyvaru can't offer you an account yet, but you don't have to carry things alone. These lines are free, confidential, and there for you right now:",
+    "line1484": "1484 · Student psychological first aid line",
+    "line1677": "1677 · National Mental Health Helpline",
+    "closing": "Please call. People there want to hear from you."
+  },
+  "member": {
+    "home": "Home",
+    "talkNow": "Talk to someone now",
+    "matching": "Finding you a listener…",
+    "breathe": "Breathe in… and out. We're finding someone for you.",
+    "cancel": "Cancel",
+    "yourChats": "Your conversations",
+    "settings": "Settings"
+  },
+  "nav": {
+    "member": "Member",
+    "listener": "Listener",
+    "moderator": "Moderator",
+    "admin": "Admin"
+  }
+}
