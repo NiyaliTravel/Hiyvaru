@@ -5,13 +5,13 @@ CREATE TABLE "audit_log" (
 	"subject_type" text,
 	"subject_id" text,
 	"detail" jsonb,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "config" (
 	"key" text PRIMARY KEY NOT NULL,
 	"value" jsonb NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "conversations" (
@@ -19,9 +19,9 @@ CREATE TABLE "conversations" (
 	"member_id" uuid NOT NULL,
 	"listener_id" uuid NOT NULL,
 	"lang" text NOT NULL,
-	"started_at" timestamp DEFAULT now() NOT NULL,
-	"ended_at" timestamp,
-	"deleted_at" timestamp,
+	"started_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"ended_at" timestamp with time zone,
+	"deleted_at" timestamp with time zone,
 	"wrapped_key" text,
 	"key_iv" text,
 	"escalated" boolean DEFAULT false NOT NULL,
@@ -35,8 +35,8 @@ CREATE TABLE "escalations" (
 	"triggered_by" uuid,
 	"moderator_id" uuid,
 	"actions_taken" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"resolved_at" timestamp
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"resolved_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "id_documents" (
@@ -46,7 +46,7 @@ CREATE TABLE "id_documents" (
 	"ciphertext" text NOT NULL,
 	"iv" text NOT NULL,
 	"mime_type" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "keyword_flags" (
@@ -55,21 +55,21 @@ CREATE TABLE "keyword_flags" (
 	"message_id" uuid,
 	"matched_term" text NOT NULL,
 	"lexicon" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "listener_profiles" (
 	"user_id" uuid PRIMARY KEY NOT NULL,
-	"verified_at" timestamp,
+	"verified_at" timestamp with time zone,
 	"doc_type" text,
 	"doc_expiry" text,
-	"training_completed_at" timestamp,
+	"training_completed_at" timestamp with time zone,
 	"level" text DEFAULT 'applicant' NOT NULL,
 	"probation_chats_left" integer DEFAULT 10 NOT NULL,
 	"daily_cap_minutes" integer DEFAULT 240 NOT NULL,
 	"available" boolean DEFAULT false NOT NULL,
 	"bio" text,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "lounge_posts" (
@@ -78,7 +78,7 @@ CREATE TABLE "lounge_posts" (
 	"parent_id" uuid,
 	"body" text NOT NULL,
 	"kind" text DEFAULT 'post' NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "match_preferences" (
@@ -86,7 +86,16 @@ CREATE TABLE "match_preferences" (
 	"member_id" uuid NOT NULL,
 	"listener_id" uuid NOT NULL,
 	"kind" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "match_queue" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"member_id" uuid NOT NULL,
+	"lang" text NOT NULL,
+	"status" text DEFAULT 'waiting' NOT NULL,
+	"conversation_id" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "messages" (
@@ -96,7 +105,7 @@ CREATE TABLE "messages" (
 	"ciphertext" text NOT NULL,
 	"iv" text NOT NULL,
 	"flagged" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "otp_codes" (
@@ -105,16 +114,16 @@ CREATE TABLE "otp_codes" (
 	"channel" text NOT NULL,
 	"code_hash" text NOT NULL,
 	"attempts" integer DEFAULT 0 NOT NULL,
-	"expires_at" timestamp NOT NULL,
-	"consumed_at" timestamp,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"expires_at" timestamp with time zone NOT NULL,
+	"consumed_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "push_subscriptions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
 	"subscription" jsonb NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "ratings" (
@@ -124,7 +133,7 @@ CREATE TABLE "ratings" (
 	"listener_id" uuid NOT NULL,
 	"stars" integer NOT NULL,
 	"flag" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "reports" (
@@ -134,14 +143,14 @@ CREATE TABLE "reports" (
 	"conversation_id" uuid,
 	"reason" text NOT NULL,
 	"status" text DEFAULT 'open' NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
-	"expires_at" timestamp NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"expires_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "training_progress" (
@@ -149,7 +158,7 @@ CREATE TABLE "training_progress" (
 	"user_id" uuid NOT NULL,
 	"module_slug" text NOT NULL,
 	"quiz_score" integer,
-	"completed_at" timestamp
+	"completed_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -161,7 +170,7 @@ CREATE TABLE "users" (
 	"display_name" text NOT NULL,
 	"lang" text DEFAULT 'dv' NOT NULL,
 	"status" text DEFAULT 'active' NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "audit_log" ADD CONSTRAINT "audit_log_actor_id_users_id_fk" FOREIGN KEY ("actor_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -177,6 +186,7 @@ ALTER TABLE "listener_profiles" ADD CONSTRAINT "listener_profiles_user_id_users_
 ALTER TABLE "lounge_posts" ADD CONSTRAINT "lounge_posts_author_id_users_id_fk" FOREIGN KEY ("author_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "match_preferences" ADD CONSTRAINT "match_preferences_member_id_users_id_fk" FOREIGN KEY ("member_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "match_preferences" ADD CONSTRAINT "match_preferences_listener_id_users_id_fk" FOREIGN KEY ("listener_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "match_queue" ADD CONSTRAINT "match_queue_member_id_users_id_fk" FOREIGN KEY ("member_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_conversation_id_conversations_id_fk" FOREIGN KEY ("conversation_id") REFERENCES "public"."conversations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_sender_id_users_id_fk" FOREIGN KEY ("sender_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "push_subscriptions" ADD CONSTRAINT "push_subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -192,6 +202,7 @@ CREATE INDEX "audit_action_idx" ON "audit_log" USING btree ("action");--> statem
 CREATE INDEX "conversations_member_idx" ON "conversations" USING btree ("member_id");--> statement-breakpoint
 CREATE INDEX "conversations_listener_idx" ON "conversations" USING btree ("listener_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "match_pref_unique" ON "match_preferences" USING btree ("member_id","listener_id");--> statement-breakpoint
+CREATE INDEX "match_queue_status_idx" ON "match_queue" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "messages_conversation_idx" ON "messages" USING btree ("conversation_id");--> statement-breakpoint
 CREATE INDEX "otp_destination_idx" ON "otp_codes" USING btree ("destination");--> statement-breakpoint
 CREATE UNIQUE INDEX "training_user_module" ON "training_progress" USING btree ("user_id","module_slug");--> statement-breakpoint

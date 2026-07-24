@@ -26,7 +26,7 @@ export default function Landing() {
         <p style={{ textAlign: "center" }}>
           <Link href={`/${locale}/login`}>{t("landing.login")}</Link>
           {" · "}
-          <Link href={`/${locale}/listener/apply`}>{t("landing.becomeListener")}</Link>
+          <Link href={`/${locale}/apply`}>{t("landing.becomeListener")}</Link>
         </p>
       </div>
       <HelplineCorner />

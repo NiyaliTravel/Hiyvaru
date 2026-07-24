@@ -10,10 +10,15 @@ import * as schema from "./schema";
 
 export type Db = ReturnType<typeof drizzlePg<typeof schema>>;
 
-let _db: Db | null = null;
+// The custom server (server.ts) and Next's compiled route bundles are separate
+// module graphs in the same process. The singleton MUST live on globalThis so
+// both share ONE connection — two PGlite instances on one data dir would not
+// see each other's writes.
+const g = globalThis as unknown as { __hiyvaruDb?: Db; __hiyvaruMigrated?: Promise<void> };
 
 export function getDb(): Db {
-  if (_db) return _db;
+  if (g.__hiyvaruDb) return g.__hiyvaruDb;
+  let _db: Db;
   const url = process.env.DATABASE_URL;
   if (url && url.length > 0) {
     _db = drizzlePg(url, { schema });
@@ -25,18 +30,17 @@ export function getDb(): Db {
     // PGlite's drizzle instance is API-compatible for everything we use.
     _db = drizzlePglite(dataDir, { schema }) as unknown as Db;
   }
+  g.__hiyvaruDb = _db;
   return _db;
 }
-
-let _migrated: Promise<void> | null = null;
 
 /**
  * Apply SQL migrations from ./drizzle exactly once per process.
  * Called from instrumentation.ts (server boot), the socket server, and tests.
  */
 export function ensureMigrated(): Promise<void> {
-  if (_migrated) return _migrated;
-  _migrated = (async () => {
+  if (g.__hiyvaruMigrated) return g.__hiyvaruMigrated;
+  g.__hiyvaruMigrated = (async () => {
     const db = getDb();
     const folder = { migrationsFolder: "./drizzle" };
     if (process.env.DATABASE_URL) {
@@ -47,13 +51,13 @@ export function ensureMigrated(): Promise<void> {
       await migrate(db as never, folder);
     }
   })();
-  return _migrated;
+  return g.__hiyvaruMigrated;
 }
 
 /** Test helper: reset the singleton so each test file gets a fresh in-memory DB. */
 export function __resetDbForTests(): void {
-  _db = null;
-  _migrated = null;
+  g.__hiyvaruDb = undefined;
+  g.__hiyvaruMigrated = undefined;
 }
 
 export { schema };

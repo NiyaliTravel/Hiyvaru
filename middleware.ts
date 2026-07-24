@@ -6,5 +6,6 @@ import { routing } from "./i18n/routing";
 export default createMiddleware(routing);
 
 export const config = {
-  matcher: "/((?!api|_next|_vercel|.*\\..*).*)",
+  // `notes` is excluded: the panic decoy page must load with zero redirects.
+  matcher: "/((?!api|_next|_vercel|notes|.*\\..*).*)",
 };

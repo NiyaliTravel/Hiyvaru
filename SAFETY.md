@@ -26,9 +26,39 @@ If you touch any file referenced here, re-run the named tests.
 ## 6. No-therapy language (Hard Rule 5)
 - **Where:** `messages/en.json` / `messages/dv.json` — `common.listenerNote` and all copy say "listeners", never counsellor/therapist/advisor. Keep it that way in every new string.
 
+## 7. Message encryption at rest (Phase B)
+- **Where:** `lib/chat/encryption.ts`, used by `lib/chat/service.ts`.
+- **Behaviour:** AES-256-GCM; per-conversation random key, stored only wrapped
+  by `MESSAGE_MASTER_KEY`. Plaintext never touches the DB.
+- **Test:** `tests/chat.test.ts` (ciphertext-only rows, round-trip).
+
+## 8. Member hard delete (Hard Rule 4, Phase B)
+- **Where:** `lib/chat/service.ts` hardDeleteConversation, route
+  `app/api/chat/[id]/delete`.
+- **Behaviour:** member-only. Deletes all message rows + keyword flags AND
+  destroys the wrapped conversation key, so stray ciphertext is undecryptable.
+- **Test:** `tests/chat.test.ts` + live drill `scripts/e2e-chat.ts`.
+
+## 9. Listener matching gate (Hard Rule 2, enforced early in Phase B)
+- **Where:** `lib/chat/matching.ts` findEligibleListener.
+- **Behaviour:** only `verified_at IS NOT NULL` + `training_completed_at IS
+  NOT NULL` + level ≠ applicant listeners are ever matchable, regardless of
+  availability. Concurrency caps: probation 1, full/mentor 2.
+- **Test:** `tests/chat.test.ts` ("matching only ever selects verified…").
+
+## 10. Panic / quick exit (Phase B)
+- **Where:** `components/PanicButton.tsx`, decoy page `app/notes/page.tsx`.
+- **Behaviour:** button or 3×Escape → `location.replace("/notes")` (unbranded
+  notes page, no history entry back to Hiyvaru).
+- **Test:** manual — click Quick exit in a chat; back button must not return.
+
+## 11. Report & block (Phase B)
+- **Where:** `app/api/report/route.ts`, `components/ReportButton.tsx`;
+  never-again prefs in `app/api/chat/[id]/rate`.
+
 ---
-Later phases append here: hard delete (B), crisis escalation + keyword flags +
-ID verification & purge + grooming defences (C), rate limits (D).
+Phase C appends: crisis escalation, keyword flags, ID verification & purge,
+grooming defences. Phase D: rate limits.
 
 ## How to run everything
 ```bash

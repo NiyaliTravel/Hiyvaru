@@ -36,7 +36,7 @@ export const users = pgTable(
     })
       .notNull()
       .default("active"),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     uniqueIndex("users_phone_hash_idx").on(t.phoneHash),
@@ -50,8 +50,8 @@ export const sessions = pgTable("sessions", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const otpCodes = pgTable(
@@ -63,9 +63,9 @@ export const otpCodes = pgTable(
     channel: text("channel", { enum: ["sms", "email"] }).notNull(),
     codeHash: text("code_hash").notNull(),
     attempts: integer("attempts").notNull().default(0),
-    expiresAt: timestamp("expires_at").notNull(),
-    consumedAt: timestamp("consumed_at"),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("otp_destination_idx").on(t.destination)],
 );
@@ -76,10 +76,10 @@ export const listenerProfiles = pgTable("listener_profiles", {
     .references(() => users.id, { onDelete: "cascade" }),
   // SAFETY: a listener may take chats ONLY when verifiedAt is set (admin ID
   // review) AND trainingCompletedAt is set (100% quiz). Enforced in matching.
-  verifiedAt: timestamp("verified_at"),
+  verifiedAt: timestamp("verified_at", { withTimezone: true }),
   docType: text("doc_type", { enum: ["national_id", "passport"] }),
   docExpiry: text("doc_expiry"), // ISO date string; only retained metadata
-  trainingCompletedAt: timestamp("training_completed_at"),
+  trainingCompletedAt: timestamp("training_completed_at", { withTimezone: true }),
   level: text("level", { enum: ["applicant", "probation", "full", "mentor"] })
     .notNull()
     .default("applicant"),
@@ -87,7 +87,7 @@ export const listenerProfiles = pgTable("listener_profiles", {
   dailyCapMinutes: integer("daily_cap_minutes").notNull().default(240),
   available: boolean("available").notNull().default(false),
   bio: text("bio"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // ID documents held ONLY between application and admin decision, then purged.
@@ -102,7 +102,7 @@ export const idDocuments = pgTable("id_documents", {
   ciphertext: text("ciphertext").notNull(),
   iv: text("iv").notNull(),
   mimeType: text("mime_type").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const conversations = pgTable(
@@ -116,12 +116,12 @@ export const conversations = pgTable(
       .notNull()
       .references(() => users.id),
     lang: text("lang", { enum: ["dv", "en"] }).notNull(),
-    startedAt: timestamp("started_at").notNull().defaultNow(),
-    endedAt: timestamp("ended_at"),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+    endedAt: timestamp("ended_at", { withTimezone: true }),
     // SAFETY: member hard-delete removes message rows AND the wrapped key
     // below, making any stray ciphertext undecryptable. deletedAt is the only
     // trace that a conversation existed (no content, for stats/abuse windows).
-    deletedAt: timestamp("deleted_at"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     // Per-conversation AES-256 key, wrapped by MESSAGE_MASTER_KEY.
     wrappedKey: text("wrapped_key"),
     keyIv: text("key_iv"),
@@ -148,7 +148,7 @@ export const messages = pgTable(
     ciphertext: text("ciphertext").notNull(),
     iv: text("iv").notNull(),
     flagged: boolean("flagged").notNull().default(false),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("messages_conversation_idx").on(t.conversationId)],
 );
@@ -162,8 +162,8 @@ export const escalations = pgTable("escalations", {
   triggeredBy: uuid("triggered_by").references(() => users.id),
   moderatorId: uuid("moderator_id").references(() => users.id),
   actionsTaken: text("actions_taken"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
 });
 
 export const reports = pgTable("reports", {
@@ -179,7 +179,7 @@ export const reports = pgTable("reports", {
   status: text("status", { enum: ["open", "reviewing", "actioned", "dismissed"] })
     .notNull()
     .default("open"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const ratings = pgTable("ratings", {
@@ -195,7 +195,7 @@ export const ratings = pgTable("ratings", {
     .references(() => users.id),
   stars: integer("stars").notNull(), // 1..5, validated in app code
   flag: boolean("flag").notNull().default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // favourite = member wants this listener again; blocked = never match again
@@ -210,7 +210,7 @@ export const matchPreferences = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     kind: text("kind", { enum: ["favourite", "never_again"] }).notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("match_pref_unique").on(t.memberId, t.listenerId)],
 );
@@ -225,14 +225,14 @@ export const keywordFlags = pgTable("keyword_flags", {
   }),
   matchedTerm: text("matched_term").notNull(),
   lexicon: text("lexicon", { enum: ["risk", "contact_info"] }).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // Editable config (risk lexicons, caps, announcement banner)
 export const config = pgTable("config", {
   key: text("key").primaryKey(),
   value: jsonb("value").notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const auditLog = pgTable(
@@ -244,7 +244,7 @@ export const auditLog = pgTable(
     subjectType: text("subject_type"),
     subjectId: text("subject_id"),
     detail: jsonb("detail"),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("audit_action_idx").on(t.action)],
 );
@@ -259,7 +259,7 @@ export const trainingProgress = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     moduleSlug: text("module_slug").notNull(),
     quizScore: integer("quiz_score"), // percent; 100 required to pass
-    completedAt: timestamp("completed_at"),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
   },
   (t) => [uniqueIndex("training_user_module").on(t.userId, t.moduleSlug)],
 );
@@ -273,8 +273,27 @@ export const loungePosts = pgTable("lounge_posts", {
   parentId: uuid("parent_id"),
   body: text("body").notNull(),
   kind: text("kind", { enum: ["post", "debrief"] }).notNull().default("post"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Waiting members for the matching queue (DB-backed so it survives restarts
+// and works with both the BullMQ and in-process drivers).
+export const matchQueue = pgTable(
+  "match_queue",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    lang: text("lang", { enum: ["dv", "en"] }).notNull(),
+    status: text("status", { enum: ["waiting", "matched", "cancelled", "timed_out"] })
+      .notNull()
+      .default("waiting"),
+    conversationId: uuid("conversation_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("match_queue_status_idx").on(t.status)],
+);
 
 export const pushSubscriptions = pgTable("push_subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -282,5 +301,5 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   subscription: jsonb("subscription").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
