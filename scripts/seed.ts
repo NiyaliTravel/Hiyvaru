@@ -17,6 +17,8 @@ const SEED_USERS = [
 async function main() {
   await ensureMigrated();
   const db = getDb();
+  const { seedLexicons } = await import("../lib/safety/lexicons");
+  await seedLexicons();
   for (const u of SEED_USERS) {
     const phoneHash = hashPhone(u.phone);
     const existing = await db

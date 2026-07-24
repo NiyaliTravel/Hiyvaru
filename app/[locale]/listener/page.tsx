@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { io, type Socket } from "socket.io-client";
 import ChatWindow from "@/components/ChatWindow";
+import EscalateButton from "@/components/EscalateButton";
 import ReportButton from "@/components/ReportButton";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import LogoutButton from "@/components/LogoutButton";
@@ -96,8 +97,14 @@ export default function ListenerDashboard() {
           socket={socket}
           conversationId={openConv}
           selfId={selfId}
+          role="listener"
           onEnded={refreshActive}
-          extraButtons={<ReportButton conversationId={openConv} />}
+          extraButtons={
+            <>
+              <EscalateButton conversationId={openConv} />
+              <ReportButton conversationId={openConv} />
+            </>
+          }
         />
       )}
     </main>

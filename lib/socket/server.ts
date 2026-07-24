@@ -88,6 +88,46 @@ export function attachSocket(httpServer: HttpServer): Server {
           at: new Date().toISOString(),
         });
         ack?.({ ok: true, id });
+
+        // SAFETY: scan plaintext AFTER delivery (never delays the message).
+        // Risk terms -> soft banner to the listener + moderator log.
+        // Contact info -> grooming warning to both parties (Hard Rule 6).
+        try {
+          const { scanMessage } = await import("@/lib/safety/scan");
+          const { audit } = await import("@/lib/audit");
+          const db = getDb();
+          const scan = await scanMessage(text);
+          if (scan.riskTerms.length > 0) {
+            await db.update(schema.messages).set({ flagged: true }).where(eq(schema.messages.id, id));
+            for (const term of scan.riskTerms) {
+              await db.insert(schema.keywordFlags).values({
+                conversationId: conv.id,
+                messageId: id,
+                matchedTerm: term,
+                lexicon: "risk",
+              });
+            }
+            io.to(`user:${conv.listenerId}`).emit("conv:risk-hint", { conversationId: conv.id });
+            await audit({
+              actorId: null,
+              action: "risk_keyword_flag",
+              subjectType: "conversation",
+              subjectId: conv.id,
+              detail: { terms: scan.riskTerms.length },
+            });
+          }
+          if (scan.contactInfo) {
+            await db.insert(schema.keywordFlags).values({
+              conversationId: conv.id,
+              messageId: id,
+              matchedTerm: "(contact info pattern)",
+              lexicon: "contact_info",
+            });
+            emitToConversation(conv.id, "conv:contact-warning", {});
+          }
+        } catch (e) {
+          console.error("[safety] scan failed", e);
+        }
       },
     );
 

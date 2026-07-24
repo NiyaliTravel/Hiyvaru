@@ -77,10 +77,36 @@ export async function listMessages(
 }
 
 export async function endConversation(id: string): Promise<void> {
-  await getDb()
+  const db = getDb();
+  const ended = await db
     .update(schema.conversations)
     .set({ endedAt: new Date() })
-    .where(and(eq(schema.conversations.id, id), isNull(schema.conversations.endedAt)));
+    .where(and(eq(schema.conversations.id, id), isNull(schema.conversations.endedAt)))
+    .returning({ listenerId: schema.conversations.listenerId });
+  if (ended.length === 0) return;
+
+  // Probation tracking (spec §3.2): each of the first 10 chats is flagged for
+  // mentor spot-review; after 10 the listener is promoted to full.
+  const [profile] = await db
+    .select()
+    .from(schema.listenerProfiles)
+    .where(eq(schema.listenerProfiles.userId, ended[0].listenerId))
+    .limit(1);
+  if (profile?.level === "probation") {
+    const left = Math.max(0, profile.probationChatsLeft - 1);
+    await db
+      .update(schema.listenerProfiles)
+      .set({ probationChatsLeft: left, level: left === 0 ? "full" : "probation" })
+      .where(eq(schema.listenerProfiles.userId, profile.userId));
+    const { audit } = await import("@/lib/audit");
+    await audit({
+      actorId: null,
+      action: left === 0 ? "listener_promoted_full" : "probation_chat_for_review",
+      subjectType: "conversation",
+      subjectId: id,
+      detail: { listenerId: profile.userId, probationChatsLeft: left },
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------

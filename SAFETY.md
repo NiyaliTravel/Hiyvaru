@@ -56,9 +56,53 @@ If you touch any file referenced here, re-run the named tests.
 - **Where:** `app/api/report/route.ts`, `components/ReportButton.tsx`;
   never-again prefs in `app/api/chat/[id]/rate`.
 
+## 12. Crisis escalation (Hard Rule 3, Phase C)
+- **Where:** `lib/safety/escalate.ts`, route `app/api/chat/[id]/escalate`,
+  UI `components/EscalateButton.tsx` + crisis card in `components/ChatWindow.tsx`.
+- **Behaviour:** member instantly sees the calm full-width card (tap-to-call
+  119 / 1677 / 332 2111; chat stays open); listener sees the crisis script;
+  conversation unlocks for moderators; duty moderators get socket ping + SMS
+  (Twilio or mock outbox); escalations + audit_log rows written.
+- **Test:** `tests/safety.test.ts` + live drill `scripts/e2e-crisis.ts`.
+
+## 13. Risk keyword flagging (Phase C)
+- **Where:** `lib/safety/lexicons.ts` (editable via `config` table),
+  `lib/safety/scan.ts`, wired in `lib/socket/server.ts` after delivery.
+- **Behaviour:** dv+en lexicons; match → message flagged + keyword_flags row +
+  soft banner to listener + audit entry. Never blocks or auto-calls anyone —
+  a human decides. Dhivehi list needs psychologist review before pilot.
+
+## 14. Grooming defences (Hard Rule 6, Phase C)
+- **Where:** contact regexes in `lib/safety/scan.ts`; warning banner to both
+  parties via `conv:contact-warning`; no photo/file sharing exists anywhere;
+  off-platform solicitation = instant-ban offence (training module
+  `boundaries` documents it; moderators enforce via user-action API).
+
+## 15. Listener ID verification & purge (Hard Rule 2, Phase C)
+- **Where:** `lib/listener/application.ts`, admin routes
+  `app/api/admin/applications`, UI `app/[locale]/admin/page.tsx`.
+- **Behaviour:** ID + selfie stored AES-256-GCM encrypted (separate master
+  key), decryptable only by admin for side-by-side review; hard-purged the
+  moment a decision is made (approve or reject); only verified ✓/doc type/
+  expiry retained. Approval sets role=listener, level=probation.
+- **Test:** `tests/safety.test.ts` (purge + activation assertions).
+
+## 16. Training gate & probation (Phase C)
+- **Where:** `lib/training/*`, probation logic in `lib/chat/service.ts`
+  endConversation.
+- **Behaviour:** 5 modules, quiz pass = 100% only; training_completed_at set
+  only when all pass (matcher requires it). Probation: first 10 chats audited
+  for mentor review, then auto-promote to full.
+- **Test:** `tests/safety.test.ts`.
+
+## 17. Moderator access control (Phase C)
+- **Where:** `app/api/moderator/*`.
+- **Behaviour:** chat content visible only when moderator_unlocked (crisis or
+  report review); every transcript view is audited; suspend/ban kills the
+  target's sessions immediately; admins cannot be actioned.
+
 ---
-Phase C appends: crisis escalation, keyword flags, ID verification & purge,
-grooming defences. Phase D: rate limits.
+Phase D appends: rate limits, new-account throttles.
 
 ## How to run everything
 ```bash

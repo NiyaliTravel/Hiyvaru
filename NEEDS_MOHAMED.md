@@ -16,9 +16,22 @@
 4. **Default locale is `dv`** (Dhivehi-first per research doc); `/` redirects
    to `/dv`.
 
+5. **ID documents live encrypted in Postgres**, not a separate S3 bucket
+   (spec §6 suggested S3). At MVP scale rows are simpler, and they exist only
+   between application and decision (purged after). Move to S3 if volume grows.
+6. **Staff dashboards (moderator/admin) are English-only** — staff tooling;
+   member/listener surfaces are fully bilingual.
+7. **Escalate button is available to both participants** (listener button per
+   spec, plus a member-triggered path counts as `member_button`).
+
 ## Inputs needed from you
 - [ ] **Native Dhivehi review of every string in `messages/dv.json`.** I wrote
       real Thaana but it must be reviewed by a native speaker before pilot.
+- [ ] **Psychologist review of the Dhivehi risk lexicon**
+      (`lib/safety/lexicons.ts`, editable in the `config` table) — spec §D
+      explicitly calls for this before pilot.
+- [ ] Review the listener training content (`lib/training/content.ts`) — it
+      encodes the crisis script and no-advice rule; word it your way.
 - [ ] Twilio credentials in `.env` when you want real SMS.
 - [ ] §1 spec note (research doc §5 flag): when moderators call police vs.
       only urging the member to call — policy wording is yours to finalise.

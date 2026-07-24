@@ -98,6 +98,48 @@
     "noActive": "No active chats.",
     "newAssigned": "A member wants to talk. You're connected."
   },
+  "crisis": {
+    "title": "You matter. Please reach out right now:",
+    "call119": "Call 119 — Police emergency",
+    "call1677": "Call 1677 — Mental Health Helpline",
+    "call3322111": "Call 332 2111 — Police hotline",
+    "staying": "Your listener is staying right here with you.",
+    "escalate": "Escalate",
+    "escalateConfirm": "This will show the member the emergency help card and alert the duty moderator. Continue?",
+    "scriptTitle": "Crisis script — stay present",
+    "script1": "Stay in the chat. Do not disappear on them.",
+    "script2": "Never promise secrecy. Safety comes first.",
+    "script3": "Encourage them to call 1677 or 119 themselves — that is the strongest outcome.",
+    "script4": "Say: \"I'm really glad you told me. Please call 1677 or 119 — I'm staying right here with you.\"",
+    "riskHint": "This conversation may involve someone at risk. Consider the crisis protocol — the Escalate button is there when you need it.",
+    "contactWarning": "For everyone's safety, please don't share phone numbers or social media. Hiyvaru chats stay anonymous — sharing contact details can lead to a permanent ban."
+  },
+  "apply": {
+    "title": "Become a listener",
+    "intro": "Listeners are trained volunteers who give their time to listen. Before your first chat we verify your identity (kept strictly private, images deleted after review) and you complete a short training.",
+    "docType": "Document type",
+    "nationalId": "National ID card",
+    "passport": "Passport",
+    "docExpiry": "Document expiry date",
+    "idImage": "Photo of your ID document",
+    "selfie": "A clear selfie (to match against the ID)",
+    "bio": "Tell us briefly why you want to listen (optional)",
+    "submit": "Submit application",
+    "submitted": "Application received. Complete the training below — an admin will review your ID. You'll be activated once both are done.",
+    "loginFirst": "Please create an account or log in first — then return here to apply.",
+    "privacyNote": "Your ID images are encrypted, visible only to the admin, and permanently deleted the moment a decision is made. We keep only: verified ✓, document type, expiry date."
+  },
+  "training": {
+    "title": "Listener training",
+    "start": "Open module",
+    "quiz": "Quiz",
+    "quizNote": "You need 100% to pass. You can retry as many times as you like.",
+    "submitQuiz": "Submit answers",
+    "passed": "Passed ✓",
+    "failed": "Not quite — re-read the module and try again.",
+    "allDone": "Training complete! Once your ID is verified you can start listening.",
+    "progress": "{done} of {total} modules complete"
+  },
   "nav": {
     "member": "Member",
     "listener": "Listener",
