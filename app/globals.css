@@ -474,6 +474,51 @@ input:focus, select:focus, textarea:focus {
 .calm-3 { background: linear-gradient(160deg, #7a6cc4, #4b3f93); }
 .calm-4 { background: linear-gradient(160deg, #ef8f6b, #d1633f); }
 
+/* Browse listeners */
+.filter-chip {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-display, inherit);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+.filter-chip:hover { border-color: var(--teal); }
+.filter-chip.on { background: var(--teal); color: #fff; border-color: var(--teal); }
+.topic-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-block: 4px 12px;
+  margin-inline: -2px;
+  scrollbar-width: none;
+}
+.topic-scroll::-webkit-scrollbar { display: none; }
+
+.lcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.16s ease, transform 0.16s ease;
+}
+.lcard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.lcard-head { display: flex; align-items: center; gap: 12px; }
+.lcard-name { font-weight: 800; font-family: var(--font-display, inherit); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lcard-meta { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+.lcard-meta .on { color: var(--teal-dark); font-weight: 600; }
+.lcard-bio { font-size: 0.9rem; color: var(--ink); margin: 12px 0 0; }
+.mini-badge { font-size: 0.68rem; font-weight: 800; border-radius: 999px; padding: 2px 9px; text-transform: uppercase; letter-spacing: 0.03em; }
+.mini-badge.kept { background: var(--teal-soft); color: var(--teal-dark); }
+.mini-badge.mentor { background: var(--coral-soft); color: var(--coral); }
+.topic-tag { font-size: 0.76rem; font-weight: 600; background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); border-radius: 999px; padding: 4px 11px; }
+
 /* You / profile rows */
 .profile-head { text-align: center; padding: 10px 0 6px; }
 .profile-head .avatar { width: 76px; height: 76px; font-size: 1.5rem; margin: 0 auto 12px; }

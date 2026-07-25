@@ -65,7 +65,10 @@
     "errInvalidDate": "Please enter a valid date of birth.",
     "errNoAccount": "No account found for that phone or email.",
     "welcome": "Welcome, {name}",
-    "yourName": "Your anonymous name is"
+    "yourName": "Your anonymous name is",
+    "welcomeName": "Your anonymous name is",
+    "welcomeBody": "This is the only name anyone here will ever see. Your number stays private. Whenever you're ready, someone is here to listen.",
+    "welcomeCta": "Enter Hiyvaru"
   },
   "under16": {
     "title": "Hiyvaru is for ages 16 and up",
@@ -115,6 +118,36 @@
     "browseTitle": "Browse listeners",
     "browseSub": "Choose someone yourself and build a connection",
     "browseSoon": "Browsing listeners is coming soon — for now we'll match you with the first available listener."
+  },
+  "browse": {
+    "title": "Browse listeners",
+    "intro": "Choose someone whose focus fits how you feel. You stay anonymous either way.",
+    "filterAll": "All",
+    "filterOnline": "Online now",
+    "filterDv": "Dhivehi",
+    "filterEn": "English",
+    "topicAny": "Any topic",
+    "online": "Online",
+    "offline": "Offline",
+    "talk": "Talk",
+    "talkWhenBack": "Notify when online",
+    "favourite": "Kept",
+    "mentor": "Mentor listener",
+    "empty": "No listeners match these filters right now. Try clearing them, or talk to the first available listener.",
+    "clear": "Clear filters",
+    "speaks": "Speaks"
+  },
+  "topics": {
+    "stress": "Stress",
+    "anxiety": "Anxiety",
+    "family": "Family",
+    "relationships": "Relationships",
+    "work": "Work",
+    "study": "Study",
+    "grief": "Grief",
+    "loneliness": "Loneliness",
+    "faith": "Faith",
+    "identity": "Identity"
   },
   "calm": {
     "title": "Calm",
@@ -231,6 +264,8 @@
     "docExpiry": "Document expiry date",
     "idImage": "Photo of your ID document",
     "selfie": "A clear selfie (to match against the ID)",
+    "topics": "What are you comfortable supporting?",
+    "topicsHint": "Members can filter by these. Pick any that fit — or none.",
     "bio": "Tell us briefly why you want to listen (optional)",
     "submit": "Submit application",
     "submitted": "Application received. Complete the training below — an admin will review your ID. You'll be activated once both are done.",

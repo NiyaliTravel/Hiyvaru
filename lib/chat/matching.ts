@@ -17,6 +17,52 @@ export type MatchOutcome =
   | { matched: true; conversationId: string; memberId: string; listenerId: string }
   | { matched: false; queueEntryId?: string };
 
+/**
+ * SAFETY-CRITICAL eligibility check for ONE listener (Hard Rule 2). Used both
+ * by Browse (preferred listener) and internally. Mirrors findEligibleListener.
+ */
+export async function isListenerEligibleFor(
+  memberId: string,
+  listenerId: string,
+  lang: "dv" | "en",
+): Promise<boolean> {
+  const db = getDb();
+  const rows = await db
+    .select({ user: schema.users, profile: schema.listenerProfiles })
+    .from(schema.listenerProfiles)
+    .innerJoin(schema.users, eq(schema.listenerProfiles.userId, schema.users.id))
+    .where(
+      and(
+        eq(schema.users.id, listenerId),
+        eq(schema.users.role, "listener"),
+        eq(schema.users.status, "active"),
+        eq(schema.listenerProfiles.available, true),
+        isNotNull(schema.listenerProfiles.verifiedAt),
+        isNotNull(schema.listenerProfiles.trainingCompletedAt),
+        inArray(schema.listenerProfiles.level, ["probation", "full", "mentor"]),
+        inArray(schema.users.lang, [lang, "both"]),
+      ),
+    )
+    .limit(1);
+  const c = rows[0];
+  if (!c) return false;
+  // member must not have blocked them
+  const never = await db
+    .select({ id: schema.matchPreferences.id })
+    .from(schema.matchPreferences)
+    .where(
+      and(
+        eq(schema.matchPreferences.memberId, memberId),
+        eq(schema.matchPreferences.listenerId, listenerId),
+        eq(schema.matchPreferences.kind, "never_again"),
+      ),
+    )
+    .limit(1);
+  if (never.length > 0) return false;
+  const cap = CAP_BY_LEVEL[c.profile.level as keyof typeof CAP_BY_LEVEL] ?? 0;
+  return (await activeConversationCount(listenerId)) < cap;
+}
+
 export async function findEligibleListener(
   memberId: string,
   lang: "dv" | "en",
@@ -69,7 +115,14 @@ export async function attemptMatch(queueEntryId: string): Promise<MatchOutcome> 
     .limit(1);
   if (!entry) return { matched: false };
 
-  const listenerId = await findEligibleListener(entry.memberId, entry.lang);
+  // Preferred listener (from Browse) gets first refusal, then fall back.
+  let listenerId: string | null = null;
+  if (entry.preferredListenerId &&
+      (await isListenerEligibleFor(entry.memberId, entry.preferredListenerId, entry.lang))) {
+    listenerId = entry.preferredListenerId;
+  } else {
+    listenerId = await findEligibleListener(entry.memberId, entry.lang);
+  }
   if (!listenerId) return { matched: false, queueEntryId };
 
   const conv = await createConversation(entry.memberId, listenerId, entry.lang);
@@ -85,7 +138,11 @@ export async function attemptMatch(queueEntryId: string): Promise<MatchOutcome> 
   };
 }
 
-export async function enqueueMember(memberId: string, lang: "dv" | "en"): Promise<string> {
+export async function enqueueMember(
+  memberId: string,
+  lang: "dv" | "en",
+  preferredListenerId?: string | null,
+): Promise<string> {
   const db = getDb();
   // One waiting entry per member.
   await db
@@ -94,7 +151,7 @@ export async function enqueueMember(memberId: string, lang: "dv" | "en"): Promis
     .where(and(eq(schema.matchQueue.memberId, memberId), eq(schema.matchQueue.status, "waiting")));
   const [row] = await db
     .insert(schema.matchQueue)
-    .values({ memberId, lang })
+    .values({ memberId, lang, preferredListenerId: preferredListenerId ?? null })
     .returning({ id: schema.matchQueue.id });
   return row.id;
 }

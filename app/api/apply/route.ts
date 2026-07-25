@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     selfieBase64: String(body.selfieBase64 ?? ""),
     selfieMime: String(body.selfieMime ?? ""),
     bio: typeof body.bio === "string" ? body.bio : undefined,
+    topics: Array.isArray(body.topics) ? body.topics.filter((x: unknown) => typeof x === "string") : undefined,
   });
   if (!result.ok) return NextResponse.json({ reason: result.reason }, { status: 400 });
   return NextResponse.json({ ok: true });

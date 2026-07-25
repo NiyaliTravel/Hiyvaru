@@ -92,6 +92,9 @@ export const listenerProfiles = pgTable("listener_profiles", {
   dailyCapMinutes: integer("daily_cap_minutes").notNull().default(240),
   available: boolean("available").notNull().default(false),
   bio: text("bio"),
+  // Topics this listener is comfortable with (slugs, e.g. ["stress","grief"]).
+  // Powers Browse Listeners filtering. Null/empty = general.
+  topics: jsonb("topics").$type<string[]>(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -297,6 +300,8 @@ export const matchQueue = pgTable(
     status: text("status", { enum: ["waiting", "matched", "cancelled", "timed_out"] })
       .notNull()
       .default("waiting"),
+    // When set (from Browse), the matcher tries this listener first.
+    preferredListenerId: uuid("preferred_listener_id"),
     conversationId: uuid("conversation_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },

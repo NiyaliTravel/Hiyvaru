@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { io, type Socket } from "socket.io-client";
 import ChatWindow from "@/components/ChatWindow";
@@ -10,10 +10,20 @@ import ReportButton from "@/components/ReportButton";
 
 type Stage = "waiting" | "chat" | "rate" | "done" | "timeout";
 
-export default function TalkPage() {
+export default function TalkNowPage() {
+  return (
+    <Suspense fallback={<main className="container" />}>
+      <TalkNow />
+    </Suspense>
+  );
+}
+
+function TalkNow() {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const preferredListenerId = searchParams.get("listener");
   const [stage, setStage] = useState<Stage>("waiting");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [selfId, setSelfId] = useState<string>("");
@@ -47,7 +57,10 @@ export default function TalkPage() {
           await fetch("/api/chat/request", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ lang: locale === "dv" ? "dv" : "en" }),
+            body: JSON.stringify({
+              lang: locale === "dv" ? "dv" : "en",
+              preferredListenerId: preferredListenerId ?? undefined,
+            }),
           });
         }
       });

@@ -15,6 +15,13 @@
       "when": 1784960121627,
       "tag": "0001_sturdy_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784975377589,
+      "tag": "0002_quick_callisto",
+      "breakpoints": true
     }
   ]
 }

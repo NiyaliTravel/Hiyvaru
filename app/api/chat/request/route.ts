@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
   }
   const body = await req.json().catch(() => ({}));
   const lang: "dv" | "en" = body.lang === "en" ? "en" : "dv";
-  const queueId = await enqueueMember(user.id, lang);
+  const preferredListenerId =
+    typeof body.preferredListenerId === "string" ? body.preferredListenerId : null;
+  const queueId = await enqueueMember(user.id, lang, preferredListenerId);
   // Kick a sweep immediately so a free listener means near-instant matching.
   runMatchSweep().catch(() => {});
   return NextResponse.json({ ok: true, queueId });

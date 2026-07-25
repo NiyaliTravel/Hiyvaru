@@ -45,6 +45,7 @@ export async function submitApplication(opts: {
   selfieBase64: string;
   selfieMime: string;
   bio?: string;
+  topics?: string[];
 }): Promise<{ ok: true } | { ok: false; reason: string }> {
   const db = getDb();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(opts.docExpiry)) return { ok: false, reason: "bad_expiry" };
@@ -66,6 +67,7 @@ export async function submitApplication(opts: {
   if (existing.length > 0 && existing[0].level !== "applicant") {
     return { ok: false, reason: "already_listener" };
   }
+  const cleanTopics = Array.isArray(opts.topics) ? opts.topics.slice(0, 10) : undefined;
   if (existing.length === 0) {
     await db.insert(schema.listenerProfiles).values({
       userId: opts.userId,
@@ -73,11 +75,12 @@ export async function submitApplication(opts: {
       docType: opts.docType,
       docExpiry: opts.docExpiry,
       bio: opts.bio?.slice(0, 1000),
+      topics: cleanTopics,
     });
   } else {
     await db
       .update(schema.listenerProfiles)
-      .set({ docType: opts.docType, docExpiry: opts.docExpiry, bio: opts.bio?.slice(0, 1000) })
+      .set({ docType: opts.docType, docExpiry: opts.docExpiry, bio: opts.bio?.slice(0, 1000), topics: cleanTopics })
       .where(eq(schema.listenerProfiles.userId, opts.userId));
   }
 

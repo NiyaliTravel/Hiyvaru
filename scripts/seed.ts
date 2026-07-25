@@ -10,7 +10,21 @@ import { hashPhone } from "../lib/auth/crypto";
 const SEED_USERS = [
   { role: "admin" as const, phone: "+9607000001", name: "AdminPearl01", lang: "both" as const },
   { role: "moderator" as const, phone: "+9607000002", name: "DutyHeron02", lang: "both" as const },
-  { role: "listener" as const, phone: "+9607000010", name: "CalmLagoon10", lang: "both" as const },
+  {
+    role: "listener" as const, phone: "+9607000010", name: "CalmLagoon10", lang: "both" as const,
+    bio: "Here to listen without judgement. I'm quiet, patient, and in no hurry.",
+    topics: ["stress", "anxiety", "loneliness"],
+  },
+  {
+    role: "listener" as const, phone: "+9607000011", name: "GentleHeron07", lang: "dv" as const,
+    bio: "Happy to sit with whatever's on your mind — work, family, or just a hard day.",
+    topics: ["family", "work", "relationships"],
+  },
+  {
+    role: "listener" as const, phone: "+9607000012", name: "SilverTide33", lang: "en" as const,
+    bio: "For anyone far from home. I know how heavy the distance can feel.",
+    topics: ["loneliness", "identity", "grief"],
+  },
   { role: "member" as const, phone: "+9607000020", name: "BlueCoral42", lang: "dv" as const },
 ];
 
@@ -54,7 +68,9 @@ async function main() {
         docExpiry: "2030-01-01",
         trainingCompletedAt: new Date(),
         level: "full",
-        available: false,
+        available: true, // seeded listeners start available so Browse looks alive
+        bio: u.bio,
+        topics: u.topics,
       });
     }
     console.log(`+ seeded ${u.role} ${u.name} (${u.phone})`);

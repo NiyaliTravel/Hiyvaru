@@ -17,7 +17,10 @@ function fileToBase64(file: File): Promise<string> {
 export default function ApplyPage() {
   const t = useTranslations("apply");
   const tc = useTranslations("common");
+  const tt = useTranslations("topics");
   const locale = useLocale();
+  const TOPICS = ["stress", "anxiety", "family", "relationships", "work", "study", "grief", "loneliness", "faith", "identity"];
+  const [topics, setTopics] = useState<string[]>([]);
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [docType, setDocType] = useState<"national_id" | "passport">("national_id");
   const [docExpiry, setDocExpiry] = useState("");
@@ -48,6 +51,7 @@ export default function ApplyPage() {
           selfieBase64: await fileToBase64(selfieFile),
           selfieMime: selfieFile.type,
           bio,
+          topics,
         }),
       });
       const data = await res.json();
@@ -91,6 +95,22 @@ export default function ApplyPage() {
             <input type="file" accept="image/*" onChange={(e) => setIdFile(e.target.files?.[0] ?? null)} />
             <label>{t("selfie")}</label>
             <input type="file" accept="image/*" capture="user" onChange={(e) => setSelfieFile(e.target.files?.[0] ?? null)} />
+            <label>{t("topics")}</label>
+            <p className="hint">{t("topicsHint")}</p>
+            <div className="chip-row">
+              {TOPICS.map((tp) => (
+                <button
+                  key={tp}
+                  type="button"
+                  className={`filter-chip${topics.includes(tp) ? " on" : ""}`}
+                  onClick={() =>
+                    setTopics((cur) => (cur.includes(tp) ? cur.filter((x) => x !== tp) : [...cur, tp]))
+                  }
+                >
+                  {tt(tp)}
+                </button>
+              ))}
+            </div>
             <label>{t("bio")}</label>
             <textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} />
             {error && <p className="error">{error}</p>}

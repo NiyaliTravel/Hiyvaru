@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-type Step = "details" | "code";
+type Step = "details" | "code" | "welcome";
 
 export default function SignupPage() {
   const t = useTranslations("auth");
@@ -22,6 +22,7 @@ export default function SignupPage() {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [assignedName, setAssignedName] = useState<string>("");
 
   async function requestCode() {
     setError(null);
@@ -75,7 +76,9 @@ export default function SignupPage() {
         setError(errText(data.reason));
         return;
       }
-      router.push(`/${locale}/member`);
+      // Warm reveal of the anonymous identity before entering the app.
+      setAssignedName(data.displayName ?? "");
+      setStep("welcome");
     } finally {
       setBusy(false);
     }
@@ -182,6 +185,20 @@ export default function SignupPage() {
               {t("verify")}
             </button>
           </>
+        )}
+
+        {step === "welcome" && (
+          <div style={{ textAlign: "center" }}>
+            <span className="avatar" aria-hidden="true" style={{ width: 76, height: 76, fontSize: "1.5rem", margin: "8px auto 16px" }}>
+              {assignedName.slice(0, 2).toUpperCase()}
+            </span>
+            <p className="hint" style={{ marginBottom: 4 }}>{t("welcomeName")}</p>
+            <h2 dir="ltr" style={{ color: "var(--teal-dark)", margin: "0 0 12px" }}>{assignedName}</h2>
+            <p>{t("welcomeBody")}</p>
+            <button className="btn block" style={{ marginTop: 16 }} onClick={() => router.push(`/${locale}/member`)}>
+              {t("welcomeCta")}
+            </button>
+          </div>
         )}
       </div>
     </main>
