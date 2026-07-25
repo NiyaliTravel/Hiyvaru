@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { Noto_Sans_Thaana, Inter } from "next/font/google";
+import { Noto_Sans_Thaana, Inter, Nunito } from "next/font/google";
 import { routing, dirFor } from "@/i18n/routing";
 import PwaSetup from "@/components/PwaSetup";
 import "../globals.css";
@@ -13,6 +13,8 @@ const thaana = Noto_Sans_Thaana({
   variable: "--font-thaana",
 });
 const inter = Inter({ subsets: ["latin"], variable: "--font-latin" });
+// Nunito: rounded, warm, trustworthy — used for headings/brand.
+const nunito = Nunito({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: "Hiyvaru — ހިޔްވަރު",
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#0e7c7b",
+  themeColor: "#0f8a86",
 };
 
 export function generateStaticParams() {
@@ -40,7 +42,11 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} dir={dirFor(locale)} className={`${thaana.variable} ${inter.variable}`}>
+    <html
+      lang={locale}
+      dir={dirFor(locale)}
+      className={`${thaana.variable} ${inter.variable} ${nunito.variable}`}
+    >
       <body>
         <NextIntlClientProvider>
           <PwaSetup />
