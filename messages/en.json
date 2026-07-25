@@ -83,6 +83,98 @@
     "yourChats": "Your conversations",
     "settings": "Settings"
   },
+  "tabs": {
+    "home": "Home",
+    "talk": "Talk",
+    "calm": "Calm",
+    "you": "You"
+  },
+  "home": {
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Good afternoon",
+    "greetingEvening": "Good evening",
+    "greetingNight": "You're not alone tonight",
+    "howAreYou": "How are you feeling right now?",
+    "moodLow": "Low",
+    "moodDown": "Down",
+    "moodOkay": "Okay",
+    "moodGood": "Good",
+    "moodGreat": "Great",
+    "moodThanks": "Thank you for checking in. Whatever you're feeling is okay.",
+    "talkTitle": "Talk to someone",
+    "talkSub": "A trained listener, ready when you are",
+    "yourListeners": "Your listeners",
+    "noListeners": "Listeners you keep will appear here after a chat.",
+    "onlineNow": "online now",
+    "offline": "offline"
+  },
+  "talkTab": {
+    "title": "How would you like to talk?",
+    "instantTitle": "Talk to someone now",
+    "instantSub": "We'll connect you to the first available listener",
+    "browseTitle": "Browse listeners",
+    "browseSub": "Choose someone yourself and build a connection",
+    "browseSoon": "Browsing listeners is coming soon — for now we'll match you with the first available listener."
+  },
+  "calm": {
+    "title": "Calm",
+    "intro": "A few small things that can help right now. No account needed, nothing to finish.",
+    "breatheTitle": "Breathe",
+    "breatheDesc": "A 60-second breathing space",
+    "groundTitle": "Grounding",
+    "groundDesc": "Come back to the present, step by step",
+    "sleepTitle": "Rest",
+    "sleepDesc": "Wind down when your mind won't stop",
+    "lonelyTitle": "Far from home",
+    "lonelyDesc": "For when the island feels very far away",
+    "back": "Back to Calm",
+    "content": {
+      "breathe": {
+        "lead": "Follow the circle. In through your nose, out through your mouth.",
+        "in": "Breathe in",
+        "hold": "Hold",
+        "out": "Breathe out"
+      },
+      "ground": {
+        "lead": "Slowly notice, and name to yourself:",
+        "steps": [
+          "5 things you can see",
+          "4 things you can feel or touch",
+          "3 things you can hear",
+          "2 things you can smell",
+          "1 thing you can taste"
+        ]
+      },
+      "sleep": {
+        "lead": "Let the day set down. There is nothing left to solve tonight.",
+        "steps": [
+          "Loosen your shoulders, your jaw, your hands",
+          "Breathe out slowly — longer than you breathe in",
+          "Let each thought pass like a wave; you don't have to hold it",
+          "Rest your eyes. You have done enough today."
+        ]
+      },
+      "lonely": {
+        "lead": "The distance is real — and so is this moment, and you're in it.",
+        "steps": [
+          "This feeling is heavy, and it will move again",
+          "Someone here will listen whenever you're ready",
+          "Send a few words to one person you trust",
+          "You belong, even far from your island"
+        ]
+      }
+    }
+  },
+  "you": {
+    "title": "You",
+    "yourName": "Your anonymous name",
+    "language": "Language",
+    "pastChats": "Your conversations",
+    "becomeListener": "Become a listener",
+    "help": "Help & safety",
+    "logout": "Log out",
+    "anonNote": "You are anonymous. Only you and your listener see your chats — and you can delete them forever."
+  },
   "chat": {
     "connected": "You're connected. Say hello when you're ready.",
     "placeholder": "Type a message…",
