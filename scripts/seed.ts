@@ -21,6 +21,8 @@ async function main() {
   await seedLexicons();
   for (const u of SEED_USERS) {
     const phoneHash = hashPhone(u.phone);
+    const { encryptContact } = await import("../lib/safety/contact");
+    const wrappedPhone = encryptContact(u.phone);
     const existing = await db
       .select({ id: schema.users.id })
       .from(schema.users)
@@ -35,6 +37,8 @@ async function main() {
       .values({
         role: u.role,
         phoneHash,
+        phoneEnc: wrappedPhone.enc,
+        phoneIv: wrappedPhone.iv,
         birthYear: 1990,
         displayName: u.name,
         lang: u.lang,

@@ -26,6 +26,18 @@
 7. **Escalate button is available to both participants** (listener button per
    spec, plus a member-triggered path counts as `member_button`).
 
+## Police referral — arrangement needed
+- [ ] **Agree a coordination channel with the Maldives Police Service** and put
+      its number in `POLICE_ALERT_PHONE`. Right now it's a placeholder
+      (332 2111). An automated platform→police life-safety referral should go
+      to an agreed contact, not the public 119 line — this is part of the
+      pre-launch "courtesy meeting with Police" already on the checklist.
+- [ ] Decide retention: how long the `escalations` record + a member's
+      encrypted phone are kept after an incident (lawyer input).
+- Note: police referral now fires on the listener's Escalate tap
+  (human-confirmed model you chose 2026-07-25). Contact stored recoverably;
+  privacy policy + terms updated to disclose the exception.
+
 ## Inputs needed from you
 - [ ] **Native Dhivehi review of every string in `messages/dv.json`.** I wrote
       real Thaana but it must be reviewed by a native speaker before pilot.

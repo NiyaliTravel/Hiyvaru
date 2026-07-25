@@ -65,6 +65,25 @@ If you touch any file referenced here, re-run the named tests.
   (Twilio or mock outbox); escalations + audit_log rows written.
 - **Test:** `tests/safety.test.ts` + live drill `scripts/e2e-crisis.ts`.
 
+## 12b. Police life-safety referral (founder decision 2026-07-25)
+- **Where:** `lib/safety/escalate.ts` dispatchPoliceReferral,
+  `lib/safety/contact.ts` (recoverable phone), `users.phone_enc/phone_iv`.
+- **Model:** HUMAN-CONFIRMED, then immediate (not keyword-automatic). An
+  escalation = a trained listener or moderator confirming danger. On that
+  confirmation the member's recoverable contact is dispatched to
+  `POLICE_ALERT_PHONE` (welfare-check request; **no chat content**), the
+  listener keeps talking, and `escalations.police_notified_at` is set.
+- **Recoverable contact:** phone is stored a second time, AES-256-GCM
+  encrypted under `CONTACT_MASTER_KEY`, decrypted ONLY in
+  `getEmergencyContact` for a referral or a moderator on an escalated chat.
+  The login hash stays the anonymity default; listeners never see it.
+- **Transparency:** privacy policy + terms state this exception plainly
+  (hidden police contact is the harmful pattern; disclosed is not).
+- **Audit:** `police_referral_dispatched` records that police were notified
+  and whether a contact existed — never the plaintext number.
+- **Test:** `tests/safety.test.ts` (recoverable-contact + referral + no
+  plaintext in audit) and live drill `scripts/e2e-crisis.ts`.
+
 ## 13. Risk keyword flagging (Phase C)
 - **Where:** `lib/safety/lexicons.ts` (editable via `config` table),
   `lib/safety/scan.ts`, wired in `lib/socket/server.ts` after delivery.

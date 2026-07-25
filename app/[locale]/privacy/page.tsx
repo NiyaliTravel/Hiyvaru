@@ -5,7 +5,8 @@ export default function PrivacyPage() {
       <div className="card">
         <h1>Privacy Policy (draft placeholder)</h1>
         <ul>
-          <li><strong>Anonymity by design.</strong> You get a random display name. Your phone number is stored only as an irreversible hash; your email is used only for account recovery.</li>
+          <li><strong>Anonymity by design.</strong> You get a random display name. Listeners and staff never see your phone number, and it is never shown to other members.</li>
+          <li><strong>One life-safety exception.</strong> If a trained listener or moderator confirms you may be in danger of suicide or self-harm, we will pass your contact details to the Maldives Police Service so they can check you are safe — while your listener stays with you. This is the only situation in which your contact leaves the platform. Your phone number is stored encrypted for exactly this purpose and for nothing else.</li>
           <li><strong>We keep your birth year only</strong> — never your full date of birth.</li>
           <li><strong>Messages are encrypted at rest</strong> with a separate key per conversation.</li>
           <li><strong>"Delete my conversation" is real.</strong> It permanently destroys the messages and the encryption key. We cannot recover them, and neither can anyone else.</li>

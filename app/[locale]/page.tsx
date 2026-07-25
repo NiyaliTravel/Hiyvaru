@@ -11,42 +11,67 @@ export default async function Landing() {
   const locale = await getLocale();
   const stats = await getPublicStats();
   return (
-    <main className="container">
+    <main className="container landing">
       <div className="topbar">
         <span className="brand">{t("common.appName")}</span>
         <LanguageSwitcher />
       </div>
-      <div className="card">
-        <h1>{t("common.tagline")}</h1>
-        <p style={{ display: "flex", gap: 14, flexWrap: "wrap", fontWeight: 600 }}>
-          <span>{t("landing.statsListeners", { count: stats.listenersOnboard })}</span>
-          <span style={{ color: stats.listenersOnline > 0 ? "var(--teal-dark)" : "var(--muted)" }}>
+
+      {/* Hero */}
+      <section className="hero">
+        <h1>{t("landing.heroTitle")}</h1>
+        <p className="hero-sub">{t("landing.heroSub")}</p>
+        <div className="stats-strip">
+          <span className="stat">
+            <strong>{stats.listenersOnboard}</strong> {t("common.listeners")}
+          </span>
+          <span className={`stat ${stats.listenersOnline > 0 ? "online" : "offline"}`}>
             ● {t("landing.statsOnline", { count: stats.listenersOnline })}
           </span>
-          <span className="hint" style={{ fontWeight: 400 }}>
-            {t("landing.statsMembers", { count: stats.members })}
-          </span>
-        </p>
+          <span className="stat muted">{t("landing.statsMembers", { count: stats.members })}</span>
+        </div>
+      </section>
+
+      {/* Two doors — get support vs give support */}
+      <section className="doors">
+        <div className="door door-primary">
+          <h2>{t("landing.talkDoorTitle")}</h2>
+          <p>{t("landing.talkDoorDesc")}</p>
+          <Link className="btn block" href={`/${locale}/signup`}>
+            {t("landing.talkDoorCta")}
+          </Link>
+        </div>
+        <div className="door door-secondary">
+          <h2>{t("landing.helpDoorTitle")}</h2>
+          <p>{t("landing.helpDoorDesc")}</p>
+          <Link className="btn block secondary" href={`/${locale}/apply`}>
+            {t("landing.helpDoorCta")}
+          </Link>
+        </div>
+      </section>
+
+      <p className="returning">
+        {t("landing.returning")} <Link href={`/${locale}/login`}>{t("landing.login")}</Link>
+      </p>
+
+      {/* Trust row */}
+      <section className="card trust">
         <ul>
           <li>{t("landing.how1")}</li>
           <li>{t("landing.how2")}</li>
           <li>{t("landing.how3")}</li>
         </ul>
         <p className="hint">{t("common.listenerNote")}</p>
-        <Link className="btn block" href={`/${locale}/signup`}>
-          {t("landing.signup")}
-        </Link>
-        <p style={{ textAlign: "center" }}>
-          <Link href={`/${locale}/login`}>{t("landing.login")}</Link>
-          {" · "}
-          <Link href={`/${locale}/apply`}>{t("landing.becomeListener")}</Link>
-        </p>
-        <p className="hint" style={{ textAlign: "center" }}>
-          <Link href={`/${locale}/terms`}>{t("legal.terms")}</Link>
-          {" · "}
-          <Link href={`/${locale}/privacy`}>{t("legal.privacy")}</Link>
-        </p>
-      </div>
+      </section>
+
+      <p className="safety-line">{t("landing.safetyLine")}</p>
+
+      <p className="hint footer-links">
+        <Link href={`/${locale}/terms`}>{t("legal.terms")}</Link>
+        {" · "}
+        <Link href={`/${locale}/privacy`}>{t("legal.privacy")}</Link>
+      </p>
+
       <HelplineCorner />
     </main>
   );

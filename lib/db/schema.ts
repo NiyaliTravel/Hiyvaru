@@ -22,10 +22,15 @@ export const users = pgTable(
     role: text("role", { enum: ["member", "listener", "moderator", "admin"] })
       .notNull()
       .default("member"),
-    // SAFETY: phone stored ONLY as HMAC hash — never plaintext. Lookup at
-    // login re-hashes the typed number. Admin cannot read numbers back.
+    // SAFETY: phone stored as HMAC hash for login lookup (irreversible).
     phoneHash: text("phone_hash"),
     email: text("email"),
+    // SAFETY (founder decision 2026-07-25): a RECOVERABLE copy of the phone,
+    // AES-256-GCM encrypted with CONTACT_MASTER_KEY. Decrypted ONLY to hand to
+    // Maldives Police in a confirmed life-safety escalation. Never shown to
+    // listeners or other members. See lib/safety/contact.ts + privacy policy.
+    phoneEnc: text("phone_enc"),
+    phoneIv: text("phone_iv"),
     // SAFETY: 16+ rule. Full DOB is validated at signup then discarded;
     // only the birth YEAR is stored (anonymity/data-minimalism).
     birthYear: integer("birth_year").notNull(),
@@ -162,6 +167,9 @@ export const escalations = pgTable("escalations", {
   triggeredBy: uuid("triggered_by").references(() => users.id),
   moderatorId: uuid("moderator_id").references(() => users.id),
   actionsTaken: text("actions_taken"),
+  // SAFETY: set when the member's contact was dispatched to Police on this
+  // escalation (founder decision 2026-07-25).
+  policeNotifiedAt: timestamp("police_notified_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   resolvedAt: timestamp("resolved_at", { withTimezone: true }),
 });

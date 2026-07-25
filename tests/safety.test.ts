@@ -11,6 +11,7 @@ import { createConversation } from "@/lib/chat/service";
 import { findEligibleListener } from "@/lib/chat/matching";
 
 process.env.DUTY_MODERATOR_PHONES = "+9607000002";
+process.env.POLICE_ALERT_PHONE = "+9603322111";
 
 async function mkUser(role: "member" | "listener" | "moderator", name: string) {
   const [u] = await getDb()
@@ -27,8 +28,26 @@ describe("Phase C safety pipeline (real DB)", () => {
 
   // SAFETY EXIT TEST (Hard Rule 3): escalation writes the incident record,
   // sends the duty-moderator SMS (mock outbox), and lands in the audit log.
-  it("crisis escalation records incident + SMS + audit", async () => {
-    const member = await mkUser("member", "CrisisMember");
+  it("crisis escalation records incident + SMS + audit + police referral with recoverable contact", async () => {
+    const { completeSignup } = await import("@/lib/auth/signup");
+    const { issueOtp } = await import("@/lib/auth/otp");
+    const { hashPhone, normalizePhone, sha256 } = await import("@/lib/auth/crypto");
+    const { getEmergencyContact } = await import("@/lib/safety/contact");
+
+    // Real signup so the member has an ENCRYPTED, recoverable phone on file.
+    const phone = "+9607733221";
+    const dest = hashPhone(normalizePhone(phone));
+    await issueOtp({ destination: dest, channel: "sms", sendTo: phone });
+    await getDb().update(schema.otpCodes).set({ codeHash: sha256("424242") }).where(eq(schema.otpCodes.destination, dest));
+    const su = await completeSignup({ channel: "sms", phone, code: "424242", dob: "1994-01-01", lang: "dv" });
+    expect(su.ok).toBe(true);
+    if (!su.ok) return;
+    const member = { id: su.userId };
+
+    // recoverable contact decrypts back to the real number (police can act)
+    const recovered = await getEmergencyContact(member.id);
+    expect(recovered.phone).toBe(phone);
+
     const listener = await mkUser("listener", "CrisisListener");
     await mkUser("moderator", "TestModerator");
     const conv = await createConversation(member.id, listener.id, "dv");
@@ -48,10 +67,21 @@ describe("Phase C safety pipeline (real DB)", () => {
     const escs = await db.select().from(schema.escalations).where(eq(schema.escalations.conversationId, conv.id));
     expect(escs.length).toBe(1);
     expect(escs[0].trigger).toBe("listener_button");
+    expect(escs[0].policeNotifiedAt).not.toBeNull(); // police were notified
 
     const logs = await db.select().from(schema.auditLog).where(eq(schema.auditLog.action, "crisis_escalation"));
     expect(logs.length).toBe(1);
     expect((logs[0].detail as { smsSentTo: number }).smsSentTo).toBe(1);
+
+    // police referral audited, WITH a real contact, but plaintext number is
+    // NOT written into the audit detail
+    const police = await db.select().from(schema.auditLog).where(eq(schema.auditLog.action, "police_referral_dispatched"));
+    expect(police.length).toBe(1);
+    const detail = police[0].detail as { dispatched: boolean; hadContact: boolean; contactType: string };
+    expect(detail.dispatched).toBe(true);
+    expect(detail.hadContact).toBe(true);
+    expect(detail.contactType).toBe("phone");
+    expect(JSON.stringify(police[0].detail)).not.toContain("7733221");
   });
 
   it("risk keywords are detected in English and Dhivehi; contact info flagged", async () => {

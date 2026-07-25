@@ -17,16 +17,26 @@
     "call": "Call"
   },
   "landing": {
+    "heroTitle": "You don't have to carry it alone.",
+    "heroSub": "Hiyvaru connects you with a trained volunteer who will simply listen — anonymously, in Dhivehi or English, whenever you need it.",
     "statsListeners": "{count} trained listeners",
     "statsOnline": "{count} online now",
-    "statsMembers": "{count} members",
+    "statsMembers": "{count} people have joined",
+    "talkDoorTitle": "I need someone to talk to",
+    "talkDoorDesc": "Get matched with a trained listener for a private, anonymous chat. Free, any time. You can delete the whole conversation forever, whenever you like.",
+    "talkDoorCta": "Talk to someone",
+    "helpDoorTitle": "I want to help others",
+    "helpDoorDesc": "Volunteer as a listener. We verify who you are, train you, and support you — so you can be there for someone who needs it.",
+    "helpDoorCta": "Become a listener",
     "cta": "Talk to someone",
     "how1": "You stay anonymous — we give you a random name and never show your number to anyone.",
     "how2": "You are matched with a trained volunteer listener, in Dhivehi or English.",
     "how3": "You can delete your conversation forever, any time.",
+    "returning": "Already have an account?",
     "signup": "Create an account",
     "login": "Log in",
-    "becomeListener": "Become a listener"
+    "becomeListener": "Become a listener",
+    "safetyLine": "In an emergency call 119 (Police) or 1677 (Mental Health Helpline) — they are there 24/7."
   },
   "auth": {
     "signupTitle": "Create your anonymous account",

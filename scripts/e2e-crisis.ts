@@ -107,6 +107,13 @@ async function main() {
   if (!crisisSms) throw new Error("no crisis SMS in outbox");
   console.log(`[moderator] SMS delivered (mock) to ${crisisSms.to}: ${JSON.stringify(crisisSms.body)}`);
 
+  // Police life-safety referral (founder decision 2026-07-25): member's
+  // recoverable contact dispatched to Police the moment the listener confirmed.
+  const policeSms = newLines.find((l) => /life-safety referral/i.test(l.body));
+  if (!policeSms) throw new Error("no police referral in outbox");
+  console.log(`[police]    referral dispatched (mock) to ${policeSms.to}: ${JSON.stringify(policeSms.body)}`);
+  if (!/\+960\d{7}/.test(policeSms.body)) throw new Error("police referral carried no recoverable member contact");
+
   // Moderator can open the unlocked chat and resolve; incident is audited
   const transcript = await api(`/api/moderator/conversation/${convId}`, moderatorCookie);
   if (transcript.status !== 200) throw new Error("moderator could not open unlocked chat");

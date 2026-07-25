@@ -84,5 +84,56 @@ export async function escalateConversation(opts: {
     detail: { trigger: opts.trigger, escalationId: esc.id, smsSentTo: phones.length },
   });
 
+  // 6: POLICE HAND-OFF (founder decision 2026-07-25, human-confirmed model).
+  //    An escalation is a trained human (listener) or moderator confirming
+  //    real danger — so the member's recoverable contact is dispatched to the
+  //    Maldives Police Service immediately, while the listener keeps talking.
+  await dispatchPoliceReferral(conv.id, conv.memberId, esc.id);
+
   return { ok: true, escalationId: esc.id };
+}
+
+async function dispatchPoliceReferral(
+  conversationId: string,
+  memberId: string,
+  escalationId: string,
+): Promise<void> {
+  const { getEmergencyContact } = await import("@/lib/safety/contact");
+  const contact = await getEmergencyContact(memberId);
+  const policeNumber = process.env.POLICE_ALERT_PHONE?.trim();
+
+  // Body carries the actionable contact for a welfare check — NOT chat content.
+  const contactLine =
+    contact.phone ?? contact.email ?? "(none on file — member volunteered no contact)";
+  const body =
+    `HIYVARU life-safety referral. A person on our anonymous listening service may be at ` +
+    `risk of suicide/self-harm. Contact: ${contactLine}. Ref ${conversationId.slice(0, 8)} / ${new Date().toISOString()}. ` +
+    `Please conduct a welfare check.`;
+
+  if (policeNumber) {
+    await sendSms(policeNumber, body);
+  } else {
+    console.warn("[police] POLICE_ALERT_PHONE not set — referral not dispatched:", body);
+  }
+
+  const db = getDb();
+  await db
+    .update(schema.escalations)
+    .set({ policeNotifiedAt: new Date() })
+    .where(eq(schema.escalations.id, escalationId));
+
+  // Audit records THAT police were notified and whether a contact existed —
+  // never the plaintext number itself.
+  await audit({
+    actorId: null,
+    action: "police_referral_dispatched",
+    subjectType: "conversation",
+    subjectId: conversationId,
+    detail: {
+      escalationId,
+      dispatched: !!policeNumber,
+      hadContact: !!(contact.phone || contact.email),
+      contactType: contact.phone ? "phone" : contact.email ? "email" : "none",
+    },
+  });
 }

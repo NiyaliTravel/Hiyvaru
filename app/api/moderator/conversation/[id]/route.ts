@@ -17,9 +17,19 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ reason: "locked" }, { status: 403 });
   }
   const messages = await listMessages(conv);
+
+  // SAFETY: on an escalated conversation the moderator may relay the member's
+  // contact to Police 119 / 332 2111. Decrypt it here (audited) — only when
+  // escalated, only for moderators/admin.
+  let emergencyContact: { phone: string | null; email: string | null } | null = null;
+  if (conv.escalated) {
+    const { getEmergencyContact } = await import("@/lib/safety/contact");
+    emergencyContact = await getEmergencyContact(conv.memberId);
+  }
+
   await audit({
     actorId: user.id,
-    action: "moderator_viewed_conversation",
+    action: conv.escalated ? "moderator_viewed_escalated_contact" : "moderator_viewed_conversation",
     subjectType: "conversation",
     subjectId: id,
   });
@@ -33,6 +43,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
       memberId: conv.memberId,
       listenerId: conv.listenerId,
     },
+    emergencyContact,
     messages,
   });
 }

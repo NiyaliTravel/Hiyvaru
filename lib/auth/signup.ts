@@ -43,14 +43,22 @@ export async function completeSignup(input: SignupInput): Promise<SignupResult> 
 
   // 2) Resolve destination
   let phoneHash: string | null = null;
+  let phoneEnc: string | null = null;
+  let phoneIv: string | null = null;
   let email: string | null = null;
   let destination: string;
   if (input.channel === "sms") {
     if (!input.phone || !isValidPhone(input.phone)) {
       return { ok: false, reason: "invalid_destination" };
     }
-    phoneHash = hashPhone(normalizePhone(input.phone));
+    const normalized = normalizePhone(input.phone);
+    phoneHash = hashPhone(normalized);
     destination = phoneHash;
+    // SAFETY: also keep a recoverable, encrypted copy for police escalation.
+    const { encryptContact } = await import("@/lib/safety/contact");
+    const wrapped = encryptContact(normalized);
+    phoneEnc = wrapped.enc;
+    phoneIv = wrapped.iv;
   } else {
     email = input.email?.trim().toLowerCase() ?? "";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -85,6 +93,8 @@ export async function completeSignup(input: SignupInput): Promise<SignupResult> 
     .values({
       role: "member",
       phoneHash,
+      phoneEnc,
+      phoneIv,
       email,
       birthYear: age.birthYear,
       displayName,

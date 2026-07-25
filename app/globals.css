@@ -110,6 +110,64 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--ring); }
 }
 .topbar .brand { font-weight: 800; font-size: 1.15rem; color: var(--teal-dark); text-decoration: none; }
 
+/* ---- Landing page ---- */
+.landing { max-width: 720px; }
+
+.hero {
+  text-align: center;
+  background: linear-gradient(160deg, #e8f6f5 0%, #f6f9f9 100%);
+  border: 1px solid #d7ecea;
+  border-radius: 20px;
+  padding: 36px 24px 28px;
+  margin-block: 8px 20px;
+}
+.hero h1 { font-size: 1.9rem; margin: 0 0 10px; color: var(--teal-dark); }
+.hero-sub { color: var(--muted); font-size: 1.05rem; max-width: 44ch; margin: 0 auto; }
+
+.stats-strip {
+  display: flex;
+  gap: 8px 18px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  font-size: 0.9rem;
+}
+.stats-strip .stat { color: var(--ink); }
+.stats-strip .stat.online { color: var(--teal-dark); font-weight: 600; }
+.stats-strip .stat.offline { color: var(--muted); }
+.stats-strip .stat.muted { color: var(--muted); }
+
+.doors { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .doors { grid-template-columns: 1fr; } }
+.door {
+  border-radius: 16px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+}
+.door h2 { font-size: 1.2rem; margin: 0 0 8px; }
+.door p { flex: 1; font-size: 0.95rem; }
+.door-primary { background: var(--teal); color: #fff; }
+.door-primary h2, .door-primary p { color: #fff; }
+.door-primary .btn { background: #fff; color: var(--teal-dark); }
+.door-primary .btn:hover { background: #eafaf9; }
+.door-secondary { background: var(--card); border: 1px solid #e3ecec; }
+
+.returning { text-align: center; color: var(--muted); margin-block: 16px 4px; }
+.trust ul { margin: 0; padding-inline-start: 20px; }
+.trust li { margin-block: 6px; }
+.safety-line {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--crisis);
+  font-weight: 600;
+  background: #fff5f5;
+  border: 1px solid #f6c9c9;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.footer-links { text-align: center; }
+
 .breathe {
   width: 84px; height: 84px; border-radius: 50%;
   background: radial-gradient(circle, var(--ring), var(--teal));
