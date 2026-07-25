@@ -112,13 +112,14 @@ export default function SignupPage() {
             {channel === "sms" ? (
               <>
                 <label htmlFor="phone">{t("phone")}</label>
+                <p className="hint">{t("phoneHint")}</p>
                 <input
                   id="phone"
                   dir="ltr"
                   inputMode="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+960 7xxxxxx"
+                  placeholder="+960 7XXXXXX"
                 />
                 <p className="hint">
                   <button type="button" className="linklike" onClick={() => setChannel("email")}

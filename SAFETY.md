@@ -72,11 +72,24 @@ If you touch any file referenced here, re-run the named tests.
   soft banner to listener + audit entry. Never blocks or auto-calls anyone —
   a human decides. Dhivehi list needs psychologist review before pilot.
 
-## 14. Grooming defences (Hard Rule 6, Phase C)
-- **Where:** contact regexes in `lib/safety/scan.ts`; warning banner to both
-  parties via `conv:contact-warning`; no photo/file sharing exists anywhere;
-  off-platform solicitation = instant-ban offence (training module
-  `boundaries` documents it; moderators enforce via user-action API).
+## 14. Grooming defences (Hard Rule 6, Phase C; hardened 2026-07-25)
+- **Where:** `lib/safety/scan.ts` checkOutgoingMessage (the send gate),
+  enforced in `lib/socket/server.ts` BEFORE delivery.
+- **Behaviour:** messages containing contact information (phone numbers,
+  @handles, platform names) are **never delivered** in either direction — the
+  sender sees why, the other side sees nothing. No photo/file sharing exists
+  anywhere. Off-platform solicitation = instant-ban offence. 3 blocked
+  messages in one conversation auto-files a moderator report.
+- **Test:** `tests/gate.test.ts`.
+
+## 14b. Explicit-content block (founder rule 2026-07-25)
+- **Where:** same gate; explicit lexicon in `lib/safety/lexicons.ts`
+  (en + dv, editable via `config` table key `explicit_lexicon`).
+- **Behaviour:** sexual/explicit content is never delivered, either direction;
+  flagged + audited; 3 strikes auto-reports to moderators. IMPORTANT
+  invariant: risk-of-harm disclosures ("I want to die") are NEVER blocked —
+  they must always reach the listener; they trigger the crisis-hint path.
+- **Test:** `tests/gate.test.ts` (including the never-block-risk case).
 
 ## 15. Listener ID verification & purge (Hard Rule 2, Phase C)
 - **Where:** `lib/listener/application.ts`, admin routes

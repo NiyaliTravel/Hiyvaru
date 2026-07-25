@@ -30,6 +30,7 @@ export default function ChatWindow({
   const [crisis, setCrisis] = useState(false);
   const [riskHint, setRiskHint] = useState(false);
   const [contactWarning, setContactWarning] = useState(false);
+  const [blocked, setBlocked] = useState<"explicit" | "contact_info" | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -79,7 +80,16 @@ export default function ChatWindow({
   function send() {
     const text = input.trim();
     if (!text || ended) return;
-    socket.emit("conv:message", { conversationId, text });
+    setBlocked(null);
+    // SAFETY: the server gate can refuse delivery (explicit content /
+    // contact info). The sender sees why; the other side sees nothing.
+    socket.emit(
+      "conv:message",
+      { conversationId, text },
+      (r: { ok?: boolean; error?: string; reason?: "explicit" | "contact_info" }) => {
+        if (r?.error === "blocked" && r.reason) setBlocked(r.reason);
+      },
+    );
     setInput("");
   }
 
@@ -120,6 +130,11 @@ export default function ChatWindow({
       {riskHint && role === "listener" && !crisis && (
         <p className="hint" role="status" style={{ background: "#fff7ed", border: "1px solid #fdba74", borderRadius: 10, padding: "8px 12px" }}>
           {tc("riskHint")}
+        </p>
+      )}
+      {blocked && (
+        <p className="error" role="alert" style={{ background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 10, padding: "8px 12px" }}>
+          {blocked === "explicit" ? t("blockedExplicit") : t("blockedContact")}
         </p>
       )}
       {contactWarning && (

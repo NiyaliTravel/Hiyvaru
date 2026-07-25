@@ -35,9 +35,27 @@ export const DEFAULT_RISK_LEXICON_DV = [
   "ސުއިސައިޑް",               // suicide (loanword)
 ];
 
-export type Lexicons = { risk: string[]; };
+// Explicit/sexual content is BLOCKED outright (founder rule 2026-07-25):
+// messages containing these terms are never delivered, in either direction.
+// Editable at runtime via the `config` table like the risk lexicon.
+export const DEFAULT_EXPLICIT_LEXICON_EN = [
+  "porn", "porno", "pornography", "nudes", "nude pic", "send pics", "sext",
+  "sexting", "horny", "blowjob", "handjob", "anal", "orgasm", "masturbat",
+  "dick pic", "my dick", "my cock", "my pussy", "tits", "boobs", "naked pic",
+  "have sex with me", "sex chat", "cybersex", "hookup", "hook up with me",
+  "onlyfans",
+];
+
+export const DEFAULT_EXPLICIT_LEXICON_DV = [
+  "އޮރިޔާން",        // nudity/indecent
+  "އޮރިޔާން ފޮޓޯ",   // nude photo
+  "ބަރަހަނާ",        // naked
+];
+
+export type Lexicons = { risk: string[] };
 
 const CONFIG_KEY = "risk_lexicons";
+const EXPLICIT_KEY = "explicit_lexicon";
 
 export async function getRiskLexicon(): Promise<string[]> {
   const rows = await getDb()
@@ -52,7 +70,20 @@ export async function getRiskLexicon(): Promise<string[]> {
   return [...DEFAULT_RISK_LEXICON_EN, ...DEFAULT_RISK_LEXICON_DV];
 }
 
-/** Seed the editable config row if absent (called from seed script). */
+export async function getExplicitLexicon(): Promise<string[]> {
+  const rows = await getDb()
+    .select()
+    .from(schema.config)
+    .where(eq(schema.config.key, EXPLICIT_KEY))
+    .limit(1);
+  if (rows.length > 0) {
+    const v = rows[0].value as { en?: string[]; dv?: string[] };
+    return [...(v.en ?? []), ...(v.dv ?? [])];
+  }
+  return [...DEFAULT_EXPLICIT_LEXICON_EN, ...DEFAULT_EXPLICIT_LEXICON_DV];
+}
+
+/** Seed the editable config rows if absent (called from seed script). */
 export async function seedLexicons(): Promise<void> {
   const db = getDb();
   const rows = await db.select().from(schema.config).where(eq(schema.config.key, CONFIG_KEY)).limit(1);
@@ -60,6 +91,13 @@ export async function seedLexicons(): Promise<void> {
     await db.insert(schema.config).values({
       key: CONFIG_KEY,
       value: { en: DEFAULT_RISK_LEXICON_EN, dv: DEFAULT_RISK_LEXICON_DV },
+    });
+  }
+  const exp = await db.select().from(schema.config).where(eq(schema.config.key, EXPLICIT_KEY)).limit(1);
+  if (exp.length === 0) {
+    await db.insert(schema.config).values({
+      key: EXPLICIT_KEY,
+      value: { en: DEFAULT_EXPLICIT_LEXICON_EN, dv: DEFAULT_EXPLICIT_LEXICON_DV },
     });
   }
 }

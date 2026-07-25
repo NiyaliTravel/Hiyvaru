@@ -17,6 +17,9 @@
     "call": "Call"
   },
   "landing": {
+    "statsListeners": "{count} trained listeners",
+    "statsOnline": "{count} online now",
+    "statsMembers": "{count} members",
     "cta": "Talk to someone",
     "how1": "You stay anonymous — we give you a random name and never show your number to anyone.",
     "how2": "You are matched with a trained volunteer listener, in Dhivehi or English.",
@@ -29,6 +32,7 @@
     "signupTitle": "Create your anonymous account",
     "loginTitle": "Log in",
     "phone": "Phone number",
+    "phoneHint": "Any country's number works — e.g. +960, +91, +94, +880. Maldivian numbers can skip the +960.",
     "email": "Email",
     "usePhone": "Use phone instead",
     "useEmail": "Use email instead",
@@ -96,7 +100,9 @@
     "available": "Available for chats",
     "unavailable": "Not available",
     "noActive": "No active chats.",
-    "newAssigned": "A member wants to talk. You're connected."
+    "newAssigned": "A member wants to talk. You're connected.",
+    "blockedExplicit": "Message not sent. Sexual or explicit content is not allowed on Hiyvaru — repeated attempts lead to a permanent ban.",
+    "blockedContact": "Message not sent. Sharing phone numbers or social media is not allowed — Hiyvaru chats stay anonymous, and repeated attempts lead to a permanent ban."
   },
   "crisis": {
     "title": "You matter. Please reach out right now:",

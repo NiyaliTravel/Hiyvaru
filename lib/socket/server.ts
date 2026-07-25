@@ -80,6 +80,47 @@ export function attachSocket(httpServer: HttpServer): Server {
         if (!conv || !isParticipant(conv, user.id) || conv.endedAt || conv.deletedAt) {
           return ack?.({ error: "closed" });
         }
+
+        // SAFETY GATE (runs BEFORE delivery): explicit content and contact
+        // info are never delivered, in either direction. Risk-of-harm terms
+        // are never blocked — that disclosure must always reach the listener.
+        const { checkOutgoingMessage } = await import("@/lib/safety/scan");
+        const { audit } = await import("@/lib/audit");
+        const gate = await checkOutgoingMessage(text);
+        if (!gate.allow) {
+          const db = getDb();
+          await db.insert(schema.keywordFlags).values({
+            conversationId: conv.id,
+            matchedTerm: gate.reason === "explicit" ? "(explicit content blocked)" : "(contact info blocked)",
+            lexicon: gate.reason === "explicit" ? "risk" : "contact_info",
+          });
+          await audit({
+            actorId: user.id,
+            action: `message_blocked_${gate.reason}`,
+            subjectType: "conversation",
+            subjectId: conv.id,
+          });
+          // Repeat offenders (3+ blocked messages in one conversation by the
+          // same sender) are auto-reported to the moderator queue.
+          const blocks = await db
+            .select()
+            .from(schema.auditLog)
+            .where(eq(schema.auditLog.subjectId, conv.id));
+          const mine = blocks.filter(
+            (b) => b.actorId === user.id && b.action.startsWith("message_blocked_"),
+          );
+          if (mine.length === 3) {
+            const targetOther = conv.memberId === user.id ? conv.listenerId : conv.memberId;
+            await db.insert(schema.reports).values({
+              reporterId: targetOther, // filed on the other party's behalf by the system
+              targetId: user.id,
+              conversationId: conv.id,
+              reason: `AUTO: ${mine.length} blocked messages (${gate.reason}) from this user in one conversation.`,
+            });
+          }
+          return ack?.({ error: "blocked", reason: gate.reason });
+        }
+
         const id = await appendMessage(conv, user.id, text);
         emitToConversation(conv.id, "conv:message", {
           id,
@@ -89,14 +130,11 @@ export function attachSocket(httpServer: HttpServer): Server {
         });
         ack?.({ ok: true, id });
 
-        // SAFETY: scan plaintext AFTER delivery (never delays the message).
-        // Risk terms -> soft banner to the listener + moderator log.
-        // Contact info -> grooming warning to both parties (Hard Rule 6).
+        // Post-delivery: risk terms -> soft banner to the listener +
+        // moderator log (never delays or blocks the message).
         try {
-          const { scanMessage } = await import("@/lib/safety/scan");
-          const { audit } = await import("@/lib/audit");
           const db = getDb();
-          const scan = await scanMessage(text);
+          const scan = gate.scan;
           if (scan.riskTerms.length > 0) {
             await db.update(schema.messages).set({ flagged: true }).where(eq(schema.messages.id, id));
             for (const term of scan.riskTerms) {
@@ -116,15 +154,7 @@ export function attachSocket(httpServer: HttpServer): Server {
               detail: { terms: scan.riskTerms.length },
             });
           }
-          if (scan.contactInfo) {
-            await db.insert(schema.keywordFlags).values({
-              conversationId: conv.id,
-              messageId: id,
-              matchedTerm: "(contact info pattern)",
-              lexicon: "contact_info",
-            });
-            emitToConversation(conv.id, "conv:contact-warning", {});
-          }
+          // (contact info no longer reaches this point — it is blocked above)
         } catch (e) {
           console.error("[safety] scan failed", e);
         }

@@ -1,11 +1,15 @@
 import Link from "next/link";
-import { useTranslations, useLocale } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import HelplineCorner from "@/components/HelplineCorner";
+import { getPublicStats } from "@/lib/stats";
 
-export default function Landing() {
-  const t = useTranslations();
-  const locale = useLocale();
+export const dynamic = "force-dynamic"; // live listener counts
+
+export default async function Landing() {
+  const t = await getTranslations();
+  const locale = await getLocale();
+  const stats = await getPublicStats();
   return (
     <main className="container">
       <div className="topbar">
@@ -14,6 +18,15 @@ export default function Landing() {
       </div>
       <div className="card">
         <h1>{t("common.tagline")}</h1>
+        <p style={{ display: "flex", gap: 14, flexWrap: "wrap", fontWeight: 600 }}>
+          <span>{t("landing.statsListeners", { count: stats.listenersOnboard })}</span>
+          <span style={{ color: stats.listenersOnline > 0 ? "var(--teal-dark)" : "var(--muted)" }}>
+            ● {t("landing.statsOnline", { count: stats.listenersOnline })}
+          </span>
+          <span className="hint" style={{ fontWeight: 400 }}>
+            {t("landing.statsMembers", { count: stats.members })}
+          </span>
+        </p>
         <ul>
           <li>{t("landing.how1")}</li>
           <li>{t("landing.how2")}</li>
