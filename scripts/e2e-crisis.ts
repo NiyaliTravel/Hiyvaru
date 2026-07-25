@@ -22,9 +22,12 @@ async function api(path: string, cookie: string | null, body?: unknown) {
   };
 }
 
-function lastOtp(): string {
-  const lines = readFileSync(".data/outbox.jsonl", "utf8").trim().split("\n");
-  return (JSON.parse(lines[lines.length - 1]).body as string).match(/\d{6}/)![0];
+// Read the latest OTP for a SPECIFIC recipient (other SMS — crisis alerts,
+// police referrals — also land in the outbox, so filter by `to`).
+function lastOtpFor(to: string): string {
+  const lines = readFileSync(".data/outbox.jsonl", "utf8").trim().split("\n").map((l) => JSON.parse(l));
+  const mine = lines.filter((l) => l.to === to && /code:/i.test(l.body));
+  return (mine[mine.length - 1].body as string).match(/\d{6}/)![0];
 }
 
 async function login(phone: string): Promise<string> {
@@ -32,7 +35,7 @@ async function login(phone: string): Promise<string> {
   if (r1.status !== 200 && r1.data.reason !== "cooldown") {
     throw new Error(`otp failed: ${JSON.stringify(r1.data)}`);
   }
-  const r2 = await api("/api/auth/login", null, { channel: "sms", phone, code: lastOtp() });
+  const r2 = await api("/api/auth/login", null, { channel: "sms", phone, code: lastOtpFor(phone) });
   if (r2.status !== 200) throw new Error(`login failed: ${JSON.stringify(r2.data)}`);
   return r2.setCookie!.split(";")[0];
 }
