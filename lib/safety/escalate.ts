@@ -55,6 +55,13 @@ export async function escalateConversation(opts: {
     .where(eq(schema.users.role, "moderator"));
   for (const m of moderators) {
     emitToUser(m.id, "moderator:crisis", { conversationId: conv.id, escalationId: esc.id });
+    // web push (generic body — no content on lock screens)
+    const { sendPushToUser } = await import("@/lib/push");
+    await sendPushToUser(m.id, {
+      title: "Hiyvaru",
+      body: "Crisis alert — open the moderator dashboard now.",
+      url: "/en/moderator",
+    });
   }
   const phones = (process.env.DUTY_MODERATOR_PHONES ?? "")
     .split(",")

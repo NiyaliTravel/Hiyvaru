@@ -8,7 +8,10 @@
     "start": "tsx server.ts",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "demo": "tsx scripts/demo.ts",
+    "drill:crisis": "tsx scripts/e2e-crisis.ts",
+    "drill:chat": "tsx scripts/e2e-chat.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
@@ -24,6 +27,7 @@
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "twilio": "^6.0.2",
+    "web-push": "^3.6.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -31,6 +35,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.23.1",
     "typescript": "^5",

@@ -9,6 +9,10 @@ export async function POST(req: NextRequest) {
   if (user.role !== "member") {
     return NextResponse.json({ reason: "already_listener" }, { status: 409 });
   }
+  const { rateLimit } = await import("@/lib/ratelimit");
+  if (!rateLimit(`apply:${user.id}`, 3, 24 * 3600_000)) {
+    return NextResponse.json({ reason: "rate_limited" }, { status: 429 });
+  }
   const body = await req.json().catch(() => ({}));
   const result = await submitApplication({
     userId: user.id,

@@ -25,6 +25,12 @@ export async function runMatchSweep(): Promise<void> {
     if (result.matched) {
       emitToUser(result.memberId, "match:found", { conversationId: result.conversationId });
       emitToUser(result.listenerId, "match:assigned", { conversationId: result.conversationId });
+      const { sendPushToUser } = await import("@/lib/push");
+      await sendPushToUser(result.listenerId, {
+        title: "Hiyvaru",
+        body: "Someone would like to talk.",
+        url: "/dv/listener",
+      });
     }
   }
 }

@@ -28,6 +28,11 @@ export default function Landing() {
           {" · "}
           <Link href={`/${locale}/apply`}>{t("landing.becomeListener")}</Link>
         </p>
+        <p className="hint" style={{ textAlign: "center" }}>
+          <Link href={`/${locale}/terms`}>{t("legal.terms")}</Link>
+          {" · "}
+          <Link href={`/${locale}/privacy`}>{t("legal.privacy")}</Link>
+        </p>
       </div>
       <HelplineCorner />
     </main>

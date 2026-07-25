@@ -51,12 +51,12 @@ async function main() {
   const assigned = new Promise<string>((res) =>
     listenerSock.on("match:assigned", (p: { conversationId: string }) => res(p.conversationId)),
   );
-  await new Promise((r) => listenerSock.on("connect", r));
+  await new Promise((r) => listenerSock.on("connect", () => r(undefined)));
   await api("/api/listener/availability", listenerCookie, { available: true });
 
   const memberCookie = await login("+9607000020");
   const memberSock = connect(memberCookie);
-  await new Promise((r) => memberSock.on("connect", r));
+  await new Promise((r) => memberSock.on("connect", () => r(undefined)));
 
   // Moderator session watches for the realtime crisis ping
   const moderatorCookie = await login("+9607000002");
@@ -64,7 +64,7 @@ async function main() {
   const moderatorPinged = new Promise<string>((res) =>
     moderatorSock.on("moderator:crisis", (p: { conversationId: string }) => res(p.conversationId)),
   );
-  await new Promise((r) => moderatorSock.on("connect", r));
+  await new Promise((r) => moderatorSock.on("connect", () => r(undefined)));
 
   await api("/api/chat/request", memberCookie, { lang: "dv" });
   const convId = await Promise.race([

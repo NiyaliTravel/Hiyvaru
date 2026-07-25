@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { io, type Socket } from "socket.io-client";
 import ChatWindow from "@/components/ChatWindow";
 import EscalateButton from "@/components/EscalateButton";
@@ -13,7 +14,9 @@ type ActiveConv = { id: string; lang: string; startedAt: string; escalated: bool
 
 export default function ListenerDashboard() {
   const t = useTranslations();
+  const locale = useLocale();
   const [selfId, setSelfId] = useState("");
+  const [needsDebrief, setNeedsDebrief] = useState(false);
   const [available, setAvailable] = useState(false);
   const [convs, setConvs] = useState<ActiveConv[]>([]);
   const [openConv, setOpenConv] = useState<string | null>(null);
@@ -27,6 +30,8 @@ export default function ListenerDashboard() {
   async function refreshActive() {
     const d = await fetch("/api/chat/active").then((r) => r.json());
     setConvs(d.conversations ?? []);
+    // Post-incident care (spec §5.5): nudge a debrief after any escalated chat.
+    setNeedsDebrief((d.conversations ?? []).some((c: ActiveConv) => c.escalated));
   }
 
   useEffect(() => {
@@ -74,6 +79,18 @@ export default function ListenerDashboard() {
           />
           {available ? t("chat.available") : t("chat.unavailable")}
         </label>
+      </div>
+
+      {needsDebrief && (
+        <div className="card" style={{ borderColor: "#fdba74", background: "#fff7ed" }}>
+          {t("lounge.debriefNudge")}
+        </div>
+      )}
+
+      <div className="card">
+        <Link className="btn secondary block" href={`/${locale}/listener/lounge`}>
+          {t("lounge.open")}
+        </Link>
       </div>
 
       <div className="card">

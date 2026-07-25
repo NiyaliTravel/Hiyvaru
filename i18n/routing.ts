@@ -1,9 +1,11 @@
 import { defineRouting } from "next-intl/routing";
 
-// Dhivehi-first: dv is the default locale. dv renders RTL (Thaana).
+// English is the default UI language (founder decision 2026-07-24: nearly all
+// Maldivians read English; Dhivehi remains one tap away in the switcher and
+// renders RTL Thaana). Chat-language matching still supports dv fully.
 export const routing = defineRouting({
-  locales: ["dv", "en"],
-  defaultLocale: "dv",
+  locales: ["en", "dv"],
+  defaultLocale: "en",
 });
 
 export type AppLocale = (typeof routing.locales)[number];

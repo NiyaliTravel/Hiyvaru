@@ -7,6 +7,10 @@ import { getConversation, isParticipant } from "@/lib/chat/service";
 export async function POST(req: NextRequest) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ reason: "unauthorized" }, { status: 401 });
+  const { rateLimit } = await import("@/lib/ratelimit");
+  if (!rateLimit(`report:${user.id}`, 10, 3600_000)) {
+    return NextResponse.json({ reason: "rate_limited" }, { status: 429 });
+  }
   const body = await req.json().catch(() => ({}));
   const conversationId = String(body.conversationId ?? "");
   const reason = String(body.reason ?? "").slice(0, 2000).trim();

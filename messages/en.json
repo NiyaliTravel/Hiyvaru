@@ -140,6 +140,20 @@
     "allDone": "Training complete! Once your ID is verified you can start listening.",
     "progress": "{done} of {total} modules complete"
   },
+  "lounge": {
+    "title": "Listener Lounge",
+    "intro": "A private space for listeners only. Decompress, ask for support, debrief after heavy chats. What's shared here stays here.",
+    "placeholder": "How are you doing?",
+    "markDebrief": "This is a debrief after a difficult chat (a mentor will follow up)",
+    "post": "Share",
+    "debriefTag": "DEBRIEF",
+    "open": "Listener Lounge",
+    "debriefNudge": "You escalated a chat recently. Please take a moment to debrief in the Lounge — a mentor will check in with you."
+  },
+  "legal": {
+    "terms": "Terms of use",
+    "privacy": "Privacy policy"
+  },
   "nav": {
     "member": "Member",
     "listener": "Listener",

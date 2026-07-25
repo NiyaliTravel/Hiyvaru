@@ -8,6 +8,11 @@ import { issueOtp } from "@/lib/auth/otp";
 // SAFETY (Hard Rule 1): for signup requests the age gate runs BEFORE any OTP
 // is sent — an under-16 attempt never receives a code and stores no state.
 export async function POST(req: NextRequest) {
+  // Abuse brake: 10 OTP requests per IP per hour.
+  const { rateLimit, clientIp } = await import("@/lib/ratelimit");
+  if (!rateLimit(`otp:${clientIp(req)}`, 10, 3600_000)) {
+    return NextResponse.json({ reason: "rate_limited" }, { status: 429 });
+  }
   const body = await req.json().catch(() => ({}));
   const { channel, phone, email, dob, purpose } = body as {
     channel?: "sms" | "email";

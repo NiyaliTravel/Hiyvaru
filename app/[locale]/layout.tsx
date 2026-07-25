@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { Noto_Sans_Thaana, Inter } from "next/font/google";
 import { routing, dirFor } from "@/i18n/routing";
+import PwaSetup from "@/components/PwaSetup";
 import "../globals.css";
 
 const thaana = Noto_Sans_Thaana({
@@ -16,6 +17,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-latin" });
 export const metadata: Metadata = {
   title: "Hiyvaru — ހިޔްވަރު",
   description: "Someone to talk to. Anonymous peer listening for the Maldives.",
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport = {
+  themeColor: "#0e7c7b",
 };
 
 export function generateStaticParams() {
@@ -36,7 +42,10 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={dirFor(locale)} className={`${thaana.variable} ${inter.variable}`}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <PwaSetup />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

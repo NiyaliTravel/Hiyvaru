@@ -10,6 +10,18 @@ const dev = process.env.NODE_ENV !== "production";
 const port = Number(process.env.PORT ?? 3000);
 
 async function main() {
+  // Sentry hook — enabled only when SENTRY_DSN is set (solo-maintainer
+  // friendly: zero overhead otherwise). Uses @sentry/node if installed.
+  if (process.env.SENTRY_DSN) {
+    try {
+      const Sentry = await import("@sentry/node" as string);
+      Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.1 });
+      console.log("[sentry] enabled");
+    } catch {
+      console.warn("[sentry] SENTRY_DSN set but @sentry/node not installed — run: npm i @sentry/node");
+    }
+  }
+
   const app = next({ dev });
   await app.prepare();
   const handler = app.getRequestHandler();

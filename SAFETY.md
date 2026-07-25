@@ -101,8 +101,23 @@ If you touch any file referenced here, re-run the named tests.
   report review); every transcript view is audited; suspend/ban kills the
   target's sessions immediately; admins cannot be actioned.
 
----
-Phase D appends: rate limits, new-account throttles.
+## 18. Rate limits & new-account throttles (Phase D)
+- **Where:** `lib/ratelimit.ts`; applied in request-otp (10/IP/hr), chat
+  request (20/member/hr + 5/day for accounts younger than 24h), report
+  (10/hr), apply (3/day).
+- **Note:** in-memory store (single-process deploy). Move to Redis if the app
+  ever runs multi-instance.
+
+## 19. Listener care (Phase D)
+- **Where:** Listener Lounge (`app/api/lounge`, listener/mentor/moderator
+  only), debrief nudge after escalated chats in the listener dashboard,
+  daily-cap column on profiles.
+
+## 20. Push notification privacy (Phase D)
+- **Where:** `lib/push.ts`, `public/sw.js`.
+- **Behaviour:** notification bodies are always generic ("Someone would like
+  to talk") — chat content and names never appear on lock screens. The
+  service worker never caches /api or /socket.io responses.
 
 ## How to run everything
 ```bash

@@ -13,8 +13,10 @@
    httpOnly cookie). Boring, auditable, no third-party identity leakage.
 3. **Signup asks full DOB in a date field** then stores year only (per spec).
    The age check runs before the OTP send, so under-16s never receive a code.
-4. **Default locale is `dv`** (Dhivehi-first per research doc); `/` redirects
-   to `/dv`.
+4. **Default locale is `en`** (your call, 2026-07-24: most Maldivians read
+   English comfortably); `/` redirects to `/en`. Dhivehi (Thaana RTL) stays
+   fully built and one tap away in the language switcher, and members can
+   still request Dhivehi-language chats.
 
 5. **ID documents live encrypted in Postgres**, not a separate S3 bucket
    (spec §6 suggested S3). At MVP scale rows are simpler, and they exist only
