@@ -23,6 +23,7 @@ export default function ChatWindow({
 }) {
   const t = useTranslations("chat");
   const tc = useTranslations("crisis");
+  const tq = useTranslations("chatUi");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [peerTyping, setPeerTyping] = useState(false);
@@ -164,6 +165,17 @@ export default function ChatWindow({
         {ended && <p className="hint">{t("ended")}</p>}
         <div ref={bottomRef} />
       </div>
+      {/* Reassurance quick-chips — listeners only. Tapping fills the box so
+          the listener can still edit; nothing is ever sent automatically. */}
+      {role === "listener" && !ended && (
+        <div className="quick-chips" aria-label={tq("quickTitle")}>
+          {(["q1", "q2", "q3", "q4", "q5"] as const).map((k) => (
+            <button key={k} type="button" className="quick-chip" onClick={() => setInput(tq(k))}>
+              {tq(k)}
+            </button>
+          ))}
+        </div>
+      )}
       <div style={{ display: "flex", gap: 8 }}>
         <input
           value={input}

@@ -87,7 +87,10 @@ export default function ListenerDashboard() {
         </div>
       )}
 
-      <div className="card">
+      <div className="card" style={{ display: "grid", gap: 8 }}>
+        <Link className="btn secondary block" href={`/${locale}/listener/growth`}>
+          {t("growth.openGrowth")}
+        </Link>
         <Link className="btn secondary block" href={`/${locale}/listener/lounge`}>
           {t("lounge.open")}
         </Link>

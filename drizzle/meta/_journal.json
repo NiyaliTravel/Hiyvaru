@@ -22,6 +22,13 @@
       "when": 1784975377589,
       "tag": "0002_quick_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785056055778,
+      "tag": "0003_cuddly_norrin_radd",
+      "breakpoints": true
     }
   ]
 }

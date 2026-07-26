@@ -308,6 +308,23 @@ export const matchQueue = pgTable(
   (t) => [index("match_queue_status_idx").on(t.status)],
 );
 
+// Cheers — encouragement from a mentor/admin to a listener (retention).
+export const cheers = pgTable(
+  "cheers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fromId: uuid("from_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    toId: uuid("to_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    note: text("note"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("cheers_to_idx").on(t.toId)],
+);
+
 export const pushSubscriptions = pgTable("push_subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
