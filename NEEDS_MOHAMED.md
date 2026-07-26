@@ -38,6 +38,20 @@
   (human-confirmed model you chose 2026-07-25). Contact stored recoverably;
   privacy policy + terms updated to disclose the exception.
 
+## Mobile app store (U5) — blocked on you
+- [ ] **Apple Developer Program** ($99/yr) — decide NeoTranscend vs personal
+      before enrolling; moving it later is painful.
+- [ ] **Google Play Console** ($25 one-time).
+- [ ] **A macOS machine with Xcode** to build/submit iOS (no way around it;
+      a cloud Mac service works).
+- [ ] **Reviewer test account** — both stores will reject the app if reviewers
+      can't get past the SMS one-time code. Give me a phone number you control
+      and I'll document it in the review notes.
+- [ ] **Firebase project** (Android `google-services.json` + iOS APNs .p8) so
+      native push actually delivers. Tokens are already captured and stored.
+- [ ] **App icon 1024×1024 + screenshots** — currently placeholder art.
+See `MOBILE.md` for the full build and submission runbook.
+
 ## Inputs needed from you
 - [ ] **Native Dhivehi review of every string in `messages/dv.json`.** I wrote
       real Thaana but it must be reviewed by a native speaker before pilot.

@@ -15,6 +15,11 @@ export async function sendPushToUser(userId: string, payload: { title: string; b
     .from(schema.pushSubscriptions)
     .where(eq(schema.pushSubscriptions.userId, userId));
   for (const s of subs) {
+    const sub = s.subscription as { kind?: string; endpoint?: string };
+    // Native (Capacitor) device tokens are delivered via FCM/APNs, not
+    // web-push. Until that server key is configured they are skipped, never
+    // sent to web-push (which would throw and delete a valid token).
+    if (sub?.kind === "native" || !sub?.endpoint) continue;
     try {
       await webpush.sendNotification(s.subscription as never, JSON.stringify(payload));
     } catch {

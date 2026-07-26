@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Noto_Sans_Thaana, Inter, Nunito } from "next/font/google";
 import { routing, dirFor } from "@/i18n/routing";
 import PwaSetup from "@/components/PwaSetup";
+import NativeBridge from "@/components/NativeBridge";
 import "../globals.css";
 
 const thaana = Noto_Sans_Thaana({
@@ -50,6 +51,7 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider>
           <PwaSetup />
+          <NativeBridge />
           {children}
         </NextIntlClientProvider>
       </body>

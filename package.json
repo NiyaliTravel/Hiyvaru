@@ -11,9 +11,20 @@
     "seed": "tsx scripts/seed.ts",
     "demo": "tsx scripts/demo.ts",
     "drill:crisis": "tsx scripts/e2e-crisis.ts",
-    "drill:chat": "tsx scripts/e2e-chat.ts"
+    "drill:chat": "tsx scripts/e2e-chat.ts",
+    "cap:add:ios": "cap add ios",
+    "cap:add:android": "cap add android",
+    "cap:sync": "cap sync",
+    "cap:open:ios": "cap open ios",
+    "cap:open:android": "cap open android"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/push-notifications": "^8.1.2",
+    "@capacitor/status-bar": "^8.0.3",
     "@electric-sql/pglite": "^0.5.4",
     "bullmq": "^5.81.1",
     "dotenv": "^17.4.2",

@@ -44,3 +44,7 @@ next-env.d.ts
 .data/
 .env
 drizzle/meta/_journal.json.bak
+
+# Capacitor native projects (regenerate with: npx cap add ios|android)
+/ios/
+/android/
