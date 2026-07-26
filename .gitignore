@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — real secrets never leave this machine.
+# .env.example IS committed on purpose: it documents required config for
+# contributors and must contain blank values only.
 .env*
+!.env.example
 
 # vercel
 .vercel
