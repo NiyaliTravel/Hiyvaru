@@ -6,8 +6,10 @@ import { getLocale, getTranslations } from "next-intl/server";
 const CARDS = [
   { slug: "breathe", cls: "calm-1", title: "breatheTitle", desc: "breatheDesc" },
   { slug: "ground", cls: "calm-2", title: "groundTitle", desc: "groundDesc" },
+  { slug: "overwhelm", cls: "calm-5", title: "overwhelmTitle", desc: "overwhelmDesc" },
   { slug: "sleep", cls: "calm-3", title: "sleepTitle", desc: "sleepDesc" },
   { slug: "lonely", cls: "calm-4", title: "lonelyTitle", desc: "lonelyDesc" },
+  { slug: "kindness", cls: "calm-6", title: "kindnessTitle", desc: "kindnessDesc" },
 ] as const;
 
 export default async function CalmPage() {

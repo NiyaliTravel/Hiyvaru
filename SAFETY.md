@@ -145,6 +145,20 @@ If you touch any file referenced here, re-run the named tests.
   only), debrief nudge after escalated chats in the listener dashboard,
   daily-cap column on profiles.
 
+## 19b. Crisis text legibility (U4)
+- **Where:** `--crisis` token in `app/globals.css`, per theme.
+- **Behaviour:** crisis/helpline text must clear WCAG AA (4.5:1) in BOTH
+  themes. Two real failures were found and fixed: dark mode inherited the
+  light red (4.28:1) and light mode measured 4.43:1. Now 5.45 dark / 5.61
+  light. **If you change `--crisis`, re-measure both themes** — this is the
+  most safety-critical text in the product and it is read at 1am.
+- **Also:** visible `:focus-visible` rings everywhere, skip-link to main
+  content, 44px minimum touch targets, `role="log"`/`aria-live` on the chat
+  transcript so screen readers announce incoming messages, forced-colors
+  support, and `prefers-reduced-motion` honoured globally.
+- **Test:** `tests/i18n.test.ts` guards translation completeness (a missing
+  Dhivehi key renders a raw key path to someone in distress).
+
 ## 20. Push notification privacy (Phase D)
 - **Where:** `lib/push.ts`, `public/sw.js`.
 - **Behaviour:** notification bodies are always generic ("Someone would like

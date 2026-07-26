@@ -160,6 +160,10 @@
     "sleepDesc": "Wind down when your mind won't stop",
     "lonelyTitle": "Far from home",
     "lonelyDesc": "For when the island feels very far away",
+    "overwhelmTitle": "Overwhelmed",
+    "overwhelmDesc": "When everything is too much at once",
+    "kindnessTitle": "Be kind to yourself",
+    "kindnessDesc": "Speak to yourself like someone you love",
     "back": "Back to Calm",
     "content": {
       "breathe": {
@@ -194,6 +198,24 @@
           "Someone here will listen whenever you're ready",
           "Send a few words to one person you trust",
           "You belong, even far from your island"
+        ]
+      },
+      "overwhelm": {
+        "lead": "You don't have to solve everything. Just the next small thing.",
+        "steps": [
+          "Put both feet flat on the floor and feel them there",
+          "Name only the one thing that must happen in the next hour",
+          "Let the rest wait — it will still be there, and so will you",
+          "If your chest is tight, try the breathing space first"
+        ]
+      },
+      "kindness": {
+        "lead": "Think of what you'd say to a friend in your place. Now say it to yourself.",
+        "steps": [
+          "\"This is hard, and I'm doing my best.\"",
+          "\"I'm allowed to struggle without being a failure.\"",
+          "\"I don't have to earn rest.\"",
+          "\"I would forgive a friend for this — I can forgive myself.\""
         ]
       }
     }
@@ -282,6 +304,12 @@
     "failed": "Not quite — re-read the module and try again.",
     "allDone": "Training complete! Once your ID is verified you can start listening.",
     "progress": "{done} of {total} modules complete"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "newMessage": "New message",
+    "messageFrom": "Message from your listener",
+    "messageFromYou": "Your message"
   },
   "growth": {
     "title": "Your journey",

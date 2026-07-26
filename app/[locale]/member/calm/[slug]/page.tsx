@@ -3,13 +3,15 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import BreathingExercise from "@/components/BreathingExercise";
 
-const SLUGS = ["breathe", "ground", "sleep", "lonely"] as const;
+const SLUGS = ["breathe", "ground", "sleep", "lonely", "overwhelm", "kindness"] as const;
 type Slug = (typeof SLUGS)[number];
 const TITLE_KEY: Record<Slug, string> = {
   breathe: "breatheTitle",
   ground: "groundTitle",
   sleep: "sleepTitle",
   lonely: "lonelyTitle",
+  overwhelm: "overwhelmTitle",
+  kindness: "kindnessTitle",
 };
 
 export default async function CalmExercise({ params }: { params: Promise<{ slug: string }> }) {

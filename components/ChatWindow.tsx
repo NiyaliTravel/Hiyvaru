@@ -24,6 +24,7 @@ export default function ChatWindow({
   const t = useTranslations("chat");
   const tc = useTranslations("crisis");
   const tq = useTranslations("chatUi");
+  const ta = useTranslations("a11y");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [peerTyping, setPeerTyping] = useState(false);
@@ -143,7 +144,14 @@ export default function ChatWindow({
           {tc("contactWarning")}
         </p>
       )}
-      <div style={{ flex: 1, overflowY: "auto", paddingBlock: 8 }}>
+      {/* Live region: screen readers announce incoming messages as they
+          arrive, so a blind member isn't left in silence. */}
+      <div
+        style={{ flex: 1, overflowY: "auto", paddingBlock: 8 }}
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+      >
         {messages.length === 0 && <p className="hint">{t("connected")}</p>}
         {messages.map((m) => (
           <div
@@ -158,6 +166,9 @@ export default function ChatWindow({
               marginInlineStart: m.senderId === selfId ? "auto" : 0,
             }}
           >
+            <span className="sr-only">
+              {m.senderId === selfId ? ta("messageFromYou") : ta("messageFrom")}:{" "}
+            </span>
             {m.text}
           </div>
         ))}
