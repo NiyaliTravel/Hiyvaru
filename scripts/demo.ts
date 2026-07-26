@@ -27,6 +27,31 @@ function connect(cookie: string): Socket {
 }
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Log in with a fresh OTP. If a code was requested moments ago the server
+ * returns a cooldown — and any code already in the outbox may have been
+ * consumed (codes are single-use by design), so we wait out the cooldown and
+ * request a genuinely new one rather than replaying a dead code.
+ */
+async function loginWithOtp(phone: string): Promise<string> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const req = await api("/api/auth/request-otp", null, { channel: "sms", phone, purpose: "login" });
+    if (req.status === 200) {
+      const res = await api("/api/auth/login", null, { channel: "sms", phone, code: lastOtpFor(phone) });
+      if (res.setCookie) return res.setCookie.split(";")[0];
+    } else if (req.data.reason === "cooldown") {
+      // try the existing code once; if it was already used, wait it out
+      const res = await api("/api/auth/login", null, { channel: "sms", phone, code: lastOtpFor(phone) });
+      if (res.setCookie) return res.setCookie.split(";")[0];
+      console.log(`    (OTP cooldown for ${phone} — waiting 61s for a fresh code)`);
+      await wait(61_000);
+    } else {
+      throw new Error(`otp request failed for ${phone}: ${JSON.stringify(req.data)}`);
+    }
+  }
+  throw new Error(`could not log in ${phone}`);
+}
+
 async function main() {
   console.log("=== HIYVARU END-TO-END DEMO ===");
   const phone = `+96077${String(Math.floor(10000 + Math.random() * 89999))}`;
@@ -45,10 +70,7 @@ async function main() {
   console.log("    -> HTTP 403 under_16, no OTP sent (routed to 1484/1677 page)");
 
   step(3, "Verified listener goes available");
-  const lr = await api("/api/auth/request-otp", null, { channel: "sms", phone: "+9607000010", purpose: "login" });
-  if (lr.status !== 200 && lr.data.reason !== "cooldown") throw new Error("listener otp");
-  const lg = await api("/api/auth/login", null, { channel: "sms", phone: "+9607000010", code: lastOtpFor("+9607000010") });
-  const listenerCookie = lg.setCookie!.split(";")[0];
+  const listenerCookie = await loginWithOtp("+9607000010");
   const listenerSock = connect(listenerCookie);
   const assigned = new Promise<string>((res) => listenerSock.on("match:assigned", (p: { conversationId: string }) => res(p.conversationId)));
   await new Promise((r) => listenerSock.on("connect", () => r(undefined)));
